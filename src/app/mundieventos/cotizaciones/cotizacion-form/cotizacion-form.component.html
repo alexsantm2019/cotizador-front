@@ -1,0 +1,144 @@
+<button class="btn btn-sm " [class]="isEditMode ? 'btn-light-info' : 'btn-success'" (click)="openModal(content)">
+  <i class="feather" [class]="isEditMode ? 'icon-edit-2' : 'icon-plus'"></i>
+  <span>{{ isEditMode ? '' : 'Nueva cotización' }}</span>
+</button>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Editar Cotización' : 'Nueva Cotización' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <i class="feather icon-x"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+
+
+    <!-- isEditMode: {{isEditMode}} -->
+
+    <form (ngSubmit)="guardarCotizacion()">
+      <div class="row">
+
+        <!-- Cliente -->
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="cliente" class="form-label">Cliente</label>
+            <select [(ngModel)]="cliente" name="cliente" id="cliente" class="form-select">
+              <option [ngValue]=0>Seleccione un cliente</option>
+              <option *ngFor="let c of clientes" [value]="c.id">
+                {{ c.nombre }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Producto -->
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="producto" class="form-label">Producto</label>
+            <select [(ngModel)]="producto" name="producto" id="producto" class="form-select"
+              (change)="agregarProducto()">
+              <option [ngValue]="null">Seleccione un producto</option>
+              <option *ngFor="let p of productos" [ngValue]="p" [disabled]="p.tipo_costo === 1 && p.cantidad <= 5">
+                {{ p.producto }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Paquete -->
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="paquete" class="form-label">Paquete</label>
+            <select [(ngModel)]="paquete" name="paquete" id="paquete" class="form-select" (change)="agregarPaquete()">
+              <option [ngValue]="null">Seleccione un paquete</option>
+              <option *ngFor="let pqt of paquetes" [ngValue]="pqt">
+                {{ pqt.nombre_paquete }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tabla dinámica -->
+        <div class="col-lg-12">
+          <div *ngIf="itemsCotizacion.length > 0" class="mb-4">
+            <h5>Resumen de Cotización</h5>
+            <div class="table-responsive">
+              <table class="table table-bordered table-sm">
+                <thead>
+                  <tr class="text-center">
+                    <th class="align-middle">Nombre</th>
+                    <th class="align-middle">Cantidad</th>
+                    <th class="align-middle">Precio Unitario</th>
+                    <th class="align-middle">Descuento</th>
+                    <th class="align-middle">Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of itemsCotizacion; let i = index">
+                    <td class="align-middle w-50">{{ item.nombre }}</td>
+                    <td class="align-middle w-25">
+                      <input *ngIf="!item.disable" type="number" class="form-control" [(ngModel)]="item.cantidad"
+                        (input)="actualizarTotal(i)" name="cantidad_{{i}}" min="1" />
+                    </td>
+                    <td class="align-middle">{{ item.precio_unitario | currency }}</td>
+                    <td class="align-middle w-25">
+                      <input *ngIf="!item.disable" type="text" class="form-control" [(ngModel)]="item.descuento"
+                        (input)="actualizarTotal(i)" name="descuento_{{i}}" [ngModelOptions]="{standalone: true}"
+                        pattern="^[0-9]*$" />
+                    </td>
+                    <td class="align-middle">{{ item.total | currency }}</td>
+                    <td class="text-center align-middle">
+                      <button type="button" class="btn btn-sm btn-light-danger" (click)="eliminarItem(i)"><i
+                          class="feather icon-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <!-- IVA -->
+          <div class="mb-3">
+            <label class="form-label">IVA</label><br>
+            <div class="btn-group" role="group" aria-label="IVA">
+              <ng-container *ngFor="let option of ivaOptions">
+                <input type="radio" class="btn-check" name="iva" [(ngModel)]="iva" [id]="'btnradio' + option.value"
+                  [value]="option.value" autocomplete="off">
+                <label class="btn btn-outline-primary" [for]="'btnradio' + option.value">
+                  {{ option.label }}
+                </label>
+              </ng-container>
+            </div>
+
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <!-- Estados de cotizacion -->
+          <div class="mb-3">
+            <label for="estado" class="form-label">Estado</label>
+            <select [(ngModel)]="estado" name="estado" id="estado" class="form-select">
+              <option [ngValue]="null">- Seleccione un estado - </option>
+              <option *ngFor="let estado of estadosCotizacion" [ngValue]="estado.codigo">
+                {{ estado.item }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-lg-12 text-right">
+          <hr>
+          <div class="col-lg-12 d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary mx-1" (click)="closeModal()">Cerrar</button>
+            <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Guardar' }}
+              Cotización</button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+  </div>
+</ng-template>

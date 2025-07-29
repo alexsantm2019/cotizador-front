@@ -1,0 +1,128 @@
+<div class="container mt-2">
+  <div class="col-md-12 mx-auto p-3 bg-white rounded shadow">
+    <h2 class="text-center mb-4">Cotizador</h2>
+    <form (ngSubmit)="guardarCotizacion()">
+      <!-- Cliente -->
+      <div class="mb-3">
+        <label for="cliente" class="form-label">Cliente</label>
+        <select [(ngModel)]="cliente" name="cliente" id="cliente" class="form-select">
+          <option value="">Seleccione un cliente</option>
+          <option *ngFor="let c of clientes" [value]="c.id">
+            {{ c.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Producto -->
+      <div class="mb-3">
+        <label for="producto" class="form-label">Producto</label>
+        <select
+          [(ngModel)]="producto"
+          name="producto"
+          id="producto"
+          class="form-select"
+          (change)="agregarProducto()"
+        >
+          <option [ngValue]="null">Seleccione un producto</option>
+          <option *ngFor="let p of productos" [ngValue]="p">
+            {{ p.producto }}
+          </option>
+        </select>
+        {{producto}}
+      </div>
+
+      <!-- Paquete -->
+      <div class="mb-3">
+        <label for="paquete" class="form-label">Paquete</label>
+        <select
+          [(ngModel)]="paquete"
+          name="paquete"
+          id="paquete"
+          class="form-select"
+          (change)="agregarPaquete()"
+        >
+          <option [ngValue]="null">Seleccione un paquete</option>
+          <option *ngFor="let pqt of paquetes" [ngValue]="pqt">
+            {{ pqt.nombre_paquete }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Tabla dinámica -->
+      <div *ngIf="itemsCotizacion.length > 0" class="mb-4">
+        <h5>Resumen de Cotización</h5>
+        <div class="table-responsive">
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr class="text-center">
+              <th class="align-middle">Nombre</th>
+              <th class="align-middle">Cantidad</th>
+              <th class="align-middle">Precio Unitario</th>
+              <th class="align-middle">Descuento</th>
+              <th class="align-middle">Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of itemsCotizacion; let i = index">
+              <td class="align-middle">{{ item.nombre }}</td>
+              <td class="align-middle">
+                <input
+                  *ngIf="!item.disable"
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="item.cantidad"
+                  (input)="actualizarTotal(i)"
+                  name="cantidad_{{i}}"
+                  min="1"                  
+                />
+              </td>
+              <td class="align-middle">{{ item.precio_unitario | currency }}</td>
+              <td class="align-middle">
+                <input
+                *ngIf="!item.disable"
+                type="text"
+                class="form-control"
+                [(ngModel)]="item.descuento"
+                (input)="actualizarTotal(i)"
+                name="descuento_{{i}}"
+                [ngModelOptions]="{standalone: true}"
+                pattern="^[0-9]*$" 
+              />
+              </td>
+              <td class="align-middle">{{ item.total | currency }}</td>
+              <td class="text-center align-middle">
+                <button type="button" class="btn btn-sm btn-light-danger" (click)="eliminarItem(i)"><i class="feather icon-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <!-- IVA -->
+      <div class="mb-3">
+        <label class="form-label">IVA</label>
+        <div class="form-check" *ngFor="let option of ivaOptions">
+          <input 
+            class="form-check-input" 
+            type="radio" 
+            [(ngModel)]="iva" 
+            name="iva" 
+            [id]="'iva' + option.value" 
+            [value]="option.value" />
+          <label class="form-check-label" [for]="'iva' + option.value">
+            {{ option.label }}
+          </label>
+        </div>
+      </div>
+
+      <!-- Botón -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-success w-100">
+          Guardar Cotización
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

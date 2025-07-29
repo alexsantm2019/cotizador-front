@@ -1,0 +1,79 @@
+<div class="row">
+  <div class="col-sm-12">
+
+    <app-card cardTitle="Inventario" [options]="false" blockClass="table-border-style">
+      <div class="table-responsive">
+        <table class="table table-sm table-hover">
+          <thead>
+            <tr class="text-center">
+              <th>#</th>
+              <th>Producto</th>
+              <th>Descripción</th>
+              <th>Tipo de costo</th>
+              <th>Actualizar</th>
+              <th>Actualizado en</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let producto of getPagedInventario(); let i = index"
+            [ngClass]="{
+              'bg-danger-light': !producto.cantidad || producto.cantidad === 0,
+              'bg-warning-light': producto.cantidad > 0 && producto.cantidad <= minimoProductosInventario
+            }"
+            >
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ producto.producto }}</td>
+              <td>{{ producto.descripcion }}</td>
+              <td class="text-center">
+                <span class="text-center">
+                  {{ producto.tipo_costo_info?.item }}
+                </span>
+              </td>
+
+              <td class="text-center text-muted td-actualizar">
+                <div class="input-group">
+                  <input type="number" min="0" class="form-control form-control-sm" [(ngModel)]="producto.cantidad"
+                    placeholder="Cantidad">
+                  <div class="input-group-append">
+                    <button class="btn btn-sm btn-outline-success" (click)="actualizarCantidad(producto)">
+                      <i class="fas fa-sync-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <span class="text-center">
+                  {{ producto.inventario_updated_at | date: 'yyyy-MM-dd HH:mm:ss' }}
+                </span>
+              </td>
+              <td class="text-center text-muted">{{ producto.user }}</td>
+
+            </tr>
+            <tr *ngIf="productosInventario.length === 0">
+              <td colspan="8" class="text-center">No hay productos disponibles</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <nav aria-label="Paginación">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="currentPage = currentPage - 1">Anterior</a>
+            </li>
+            <li class="page-item" *ngFor="let page of getPageArray(productosInventario.length)"
+              [class.active]="page === currentPage">
+              <a class="page-link" (click)="currentPage = page">{{ page }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === getPageArray(productosInventario.length).length">
+              <a class="page-link" (click)="currentPage = currentPage + 1">Siguiente</a>
+            </li>
+          </ul>
+        </nav>
+
+      </div>
+    </app-card>
+
+
+  </div>
+</div>

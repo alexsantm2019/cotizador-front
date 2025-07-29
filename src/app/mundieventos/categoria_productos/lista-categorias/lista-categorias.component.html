@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-sm-12">
+
+    <app-card cardTitle="Categoría de productos" [options]="false" blockClass="table-border-style">
+      <div class="table-responsive">
+        <table class="table table-sm table-hover">
+          <thead>
+            <tr class="text-center">
+              <th>#</th>
+              <th>Categoría</th>              
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let categoria of getPagedClientes(); let i = index">
+              <th  class="text-center" scope="row">{{ i + 1 }}</th>
+              <td  class="text-center">{{ categoria.categoria }}</td>              
+              <td class="text-center align-middle">
+                  <button  class="btn btn-sm btn-light-primary" (click)="editarCategoria(categoria)">
+                    <i class="feather icon-edit-2"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-light-danger" aria-label="Close" (click)="deleteCategoria(categoria.id)">
+                    <i class="feather icon-trash"></i>
+                  </button>
+                  
+              </td>
+            </tr>
+            <tr *ngIf="categoriaProductos.length === 0">
+              <td colspan="8" class="text-center">No hay categorias disponibles</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <nav aria-label="Paginación">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="currentPage = currentPage - 1">Anterior</a>
+            </li>
+            <li
+              class="page-item"
+              *ngFor="let page of getPageArray(categoriaProductos.length)"
+              [class.active]="page === currentPage"
+            >
+              <a class="page-link" (click)="currentPage = page">{{ page }}</a>
+            </li>
+            <li
+              class="page-item"
+              [class.disabled]="currentPage === getPageArray(categoriaProductos.length).length"
+            >
+              <a class="page-link" (click)="currentPage = currentPage + 1">Siguiente</a>
+            </li>
+          </ul>
+        </nav>
+
+      </div>
+    </app-card>
+
+  </div>
+</div>

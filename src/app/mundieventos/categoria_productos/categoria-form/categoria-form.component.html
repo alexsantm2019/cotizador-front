@@ -1,0 +1,29 @@
+<app-card cardTitle="Categoría de productos" [options]="false" blockClass="table-border-style">
+    <form [formGroup]="categoriaForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="producto" class="form-label">Categoria (*)</label>
+            <input
+              type="text"
+              class="form-control"
+              id="categoria"
+              formControlName="categoria"
+            />
+            <div *ngIf="categoriaForm.get('categoria')?.touched && categoriaForm.get('categoria')?.invalid" class="text-danger">
+              <small *ngIf="categoriaForm.get('categoria')?.errors?.['required']">Nombre es obligatorio.</small>
+            </div>
+          </div>         
+        </div>  
+      </div>        
+
+      <div class="col-lg-12 text-right">
+        <div class="col-lg-12 d-flex justify-content-end">          
+          <button *ngIf="isEditMode" class="btn btn-sm btn-light mx-2" (click)="changeEditMode()">Add</button>
+          <button type="submit" class="btn  btn-sm btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
+        </div>
+      </div>
+      
+    </form>
+</app-card >
+

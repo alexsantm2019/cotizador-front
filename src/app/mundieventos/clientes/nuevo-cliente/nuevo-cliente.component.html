@@ -1,0 +1,100 @@
+<button class="btn btn-sm btn-success" [class]="isEditMode ? 'btn-light-primary mx-1' : 'btn-success'"  (click)="openModal(content)">
+  <i class="feather" [class]="isEditMode ? 'icon-edit-2' : 'icon-plus'"></i>
+  <span>{{ isEditMode ? '' : 'Nuevo Cliente' }}</span>
+</button>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Editar Cliente' : 'Nuevo Cliente' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <i class="feather icon-x"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <!-- Vincula el formulario reactivo -->
+     
+    <form [formGroup]="clienteForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="producto" class="form-label">Cliente (*)</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nombre"
+              formControlName="nombre"
+            />
+            <div *ngIf="clienteForm.get('nombre')?.touched && clienteForm.get('nombre')?.invalid" class="text-danger">
+              <small *ngIf="clienteForm.get('nombre')?.errors?.['required']">Nombre es obligatorio.</small>
+            </div>
+          </div>
+         
+        </div>
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="identificacion" class="form-label">Identificación</label>
+            <input
+              type="text"
+              class="form-control"
+              id="identificacion"
+              formControlName="identificacion"
+            />
+            <div *ngIf="clienteForm.get('identificacion')?.touched && clienteForm.get('identificacion')?.invalid" class="text-danger">
+              <small *ngIf="clienteForm.get('identificacion')?.errors?.['required']">La identificación es obligatoria.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="correo" class="form-label">Correo</label>
+            <input
+              type="text"
+              class="form-control"
+              id="correo"
+              formControlName="correo"
+            />
+            <div *ngIf="clienteForm.get('correo')?.touched && clienteForm.get('correo')?.invalid" class="text-danger">
+              <small *ngIf="clienteForm.get('correo')?.errors?.['required']">Correo es obligatorio.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input
+              type="text"
+              class="form-control"
+              id="telefono"
+              formControlName="telefono"
+            />
+            <div *ngIf="clienteForm.get('telefono')?.touched && clienteForm.get('telefono')?.invalid" class="text-danger">
+              <small *ngIf="clienteForm.get('telefono')?.errors?.['required']">Teléfono es obligatorio.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input
+              type="text"
+              class="form-control"
+              id="direccion"
+              formControlName="direccion"
+            />
+            <div *ngIf="clienteForm.get('direccion')?.touched && clienteForm.get('direccion')?.invalid" class="text-danger">
+              <small *ngIf="clienteForm.get('direccion')?.errors?.['required']">Dirección es obligatoria.</small>
+            </div>
+          </div>
+        </div>        
+
+       
+        <div class="col-lg-12 text-right">
+          <div class="col-lg-12 d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary mx-1" (click)="closeModal()">Cerrar</button>
+            <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

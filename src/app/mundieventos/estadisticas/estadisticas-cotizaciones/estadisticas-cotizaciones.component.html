@@ -1,0 +1,65 @@
+<div class="row w-100">
+
+  @if(cotizaciones.length > 0){
+  <form [formGroup]="filterForm" (ngSubmit)="getCotizaciones()" class="w-100">
+    <div class="card">
+      <div class="row p-2 d-flex justify-content-center align-middle mt-2">
+
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-4 col-form-label">Mes:</label>
+            <div class="col-sm-8">
+              <select class="form-select" formControlName="month" id="month">
+                <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-4 col-form-label">Año:</label>
+            <div class="col-sm-8">
+              <select class="form-select" formControlName="year" id="year">
+                <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-2">
+          <button type="submit" class="btn btn-secondary mx-1" (click)="getCotizaciones()">Filtrar</button>
+        </div>
+        <div class="col-lg-2">
+          <span class="d-inline mr-4 h4">{{cotizaciones.length}}</span> <span class="ml-3 d-inline">registros</span>
+        </div>
+
+      </div>
+    </div>
+  </form>
+
+
+  <div class="col-md-6">
+    <app-card cardTitle="Pie Chart" [options]="false">
+      <apx-chart [labels]="pie1CAC.labels!" [chart]="pie1CAC.chart!" [dataLabels]="pie1CAC.dataLabels!"
+        [series]="pie1CAC.series!" [colors]="pie1CAC.colors!" [responsive]="pie1CAC.responsive!"
+        [legend]="pie1CAC.legend!"></apx-chart>
+    </app-card>
+  </div>
+  <div class="col-md-6">
+    <app-card cardTitle="Pie Chart donut" [options]="false">
+      <apx-chart [plotOptions]="pie2CAC.plotOptions!" [chart]="pie2CAC.chart!" [dataLabels]="pie2CAC.dataLabels!"
+        [series]="pie2CAC.series!" [colors]="pie2CAC.colors!" [responsive]="pie2CAC.responsive!"
+        [legend]="pie2CAC.legend!"></apx-chart>
+    </app-card>
+  </div>
+  <!-- [ variant-chart ] end -->
+
+  }@else {
+  <div class="alert alert-warning h3">
+    <i class="feather icon-alert-triangle"></i>
+    No existen cotizaciones
+  </div>
+  }
+
+</div>

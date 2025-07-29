@@ -1,0 +1,49 @@
+.toast-container {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .toast {
+    min-width: 250px;
+    max-width: 400px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #444;
+    color: white;
+  }
+  
+  .bg-success {
+    background-color: #28a745;
+  }
+  
+  .bg-danger {
+    background-color: #dc3545;
+  }
+  
+  .bg-warning {
+    background-color: #ffc107;
+  }
+  
+  .text-light {
+    color: #fff;
+  }
+  
+  .btn-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+
+  .table-producto {width: 40% !important;}
+  .table-cantidad {width: 20% !important;}
+  .table-valor {width: 20% !important;}
+  .table-acciones {width: 20% !important;}
+  

@@ -1,0 +1,16 @@
+<div *ngFor="let toast of toasts" class="toast-container" [ngClass]="toast.options?.classname">
+	<div class="toast" *ngIf="toast.textOrTpl">
+	  <!-- Verificar si es un TemplateRef antes de pasarlo al ngTemplateOutlet -->
+	  <ng-container *ngIf="isTemplateRef(toast.textOrTpl); else textTemplate">
+		<ng-template [ngTemplateOutlet]="toast.textOrTpl"></ng-template>
+	  </ng-container>
+	  
+	  <!-- Si no es TemplateRef, mostrar el texto -->
+	  <ng-template #textTemplate>
+		<div class="toast-body">
+		  {{ toast.textOrTpl }}
+		</div>
+	  </ng-template>
+	</div>
+  </div>
+  

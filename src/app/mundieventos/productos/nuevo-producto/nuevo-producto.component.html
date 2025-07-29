@@ -1,0 +1,144 @@
+<!-- <button class="btn btn-sm btn-light-primary" (click)="openModal(content)">
+  <i class="feather" [class]="isEditMode ? 'icon-edit-2' : 'icon-plus'"></i>  
+</button> -->
+
+<button class="btn btn-sm " [class]="isEditMode ? 'btn-light-primary mx-1' : 'btn-success'" (click)="openModal(content)">
+  <i class="feather" [class]="isEditMode ? 'icon-edit-2' : 'icon-plus'"></i>
+  <span>{{ isEditMode ? '' : 'Nuevo Producto' }}</span>
+</button>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Editar Producto' : 'Nuevo Producto' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <i class="feather icon-x"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <!-- Vincula el formulario reactivo -->
+     
+    <form [formGroup]="productoForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="producto" class="form-label">Producto (*)</label>
+            <input
+              type="text"
+              class="form-control"
+              id="producto"
+              formControlName="producto"
+            />
+            <div *ngIf="productoForm.get('producto')?.touched && productoForm.get('producto')?.invalid" class="text-danger">
+              <small *ngIf="productoForm.get('producto')?.errors?.['required']">El producto es obligatorio.</small>
+            </div>
+          </div>
+         
+        </div>
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <input
+              type="text"
+              class="form-control"
+              id="descripcion"
+              formControlName="descripcion"
+            />
+            <div *ngIf="productoForm.get('descripcion')?.touched && productoForm.get('descripcion')?.invalid" class="text-danger">
+              <small *ngIf="productoForm.get('descripcion')?.errors?.['required']">La descripción es obligatoria.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="tipo_costo" class="form-label">Tipo de Costo (*)</label>            
+            <select class="form-select" id="tipo_costo" formControlName="tipo_costo">
+              <option value="" disabled>- Seleccione -</option>
+              <option
+                *ngFor="let tipoCosto of tipoCostos"
+                [value]="tipoCosto.codigo"
+              >
+                {{ tipoCosto.item }}
+              </option>
+            </select>
+            <div *ngIf="productoForm.get('tipo_costo')?.touched && productoForm.get('tipo_costo')?.invalid" class="text-danger">
+              <small *ngIf="productoForm.get('tipo_costo')?.errors?.['required']">El tipo de costo es obligatorio.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="costo" class="form-label">Costo (*)</label>
+            <input
+              type="number"
+              class="form-control"
+              id="costo"
+              formControlName="costo"
+            />
+            <div *ngIf="productoForm.get('costo')?.touched && productoForm.get('costo')?.invalid" class="text-danger">
+              <small *ngIf="productoForm.get('costo')?.errors?.['required']">El costo es obligatorio.</small>
+              <small *ngIf="productoForm.get('costo')?.errors?.['min']">El costo debe ser mayor a 0.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="mb-3">
+            <label for="ubicacion" class="form-label">Ubicación</label>
+            <input
+              type="text"
+              class="form-control"
+              id="ubicacion"
+              formControlName="ubicacion"
+            />
+            <div *ngIf="productoForm.get('ubicacion')?.touched && productoForm.get('ubicacion')?.invalid" class="text-danger">
+              <small *ngIf="productoForm.get('ubicacion')?.errors?.['required']">La ubicación es obligatoria.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="estado" class="form-label">Categoría (*)</label>
+            <select
+            id="categoria_producto_id"
+            class="form-control"
+            formControlName="categoria_producto_id"
+            required
+          >
+            <option value="" disabled> - Seleccione -</option>
+            <option
+              *ngFor="let categoria of categoriasProductos"
+              [value]="categoria.id"
+            >
+            {{ categoria.categoria}}
+            </option>
+          </select>
+            <div *ngIf="productoForm.get('categoria_producto_id')?.touched && productoForm.get('categoria_producto_id')?.invalid" class="text-danger">
+              <small *ngIf="productoForm.get('categoria_producto_id')?.errors?.['required']">Categoría es obligatoria.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="estado" class="form-label">Estado (*)</label>
+            <select class="form-select" id="estado" formControlName="estado">
+              <option value="" disabled>- Seleccione -</option>
+              <option
+                *ngFor="let estado of estadosProductos"
+                [value]="estado.codigo"
+              >
+                {{ estado.item}}
+              </option>
+            </select>
+            <div *ngIf="productoForm.get('estado')?.touched && productoForm.get('estado')?.invalid" class="text-danger">
+              <small *ngIf="productoForm.get('estado')?.errors?.['required']">El estado es obligatorio.</small>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="col-lg-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary mx-1" (click)="closeModal()">Cerrar</button>
+          <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

@@ -1,0 +1,112 @@
+<div class="card p-2 d-flex justify-content-center align-middle">
+  <div class="row my-2 ">
+
+    <div class="form-group col-lg-5">
+      <label for="filtroFecha">Filtrar por Fecha:</label>
+      <input type="date" id="filtroFecha" class="form-control" [(ngModel)]="filtroFecha" (change)="aplicarFiltros()">
+    </div>
+
+    <div class="form-group col-lg-5">
+      <label for="cliente" class="form-label">Filtrar por Cliente</label>
+      <select [(ngModel)]="filtroCliente" name="filtroCliente" id="filtroCliente" class="form-select"
+        (change)="aplicarFiltros()">
+        <option [ngValue]="null">Seleccione un cliente</option>
+        <option *ngFor="let c of clientes" [ngValue]="c.id">
+          {{ c.nombre }}
+        </option>
+      </select>
+    </div>
+    <div class="form-group col-lg-2 mt-4">
+      <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar Filtros</button>
+    </div>
+  </div>
+</div>
+<!-- <pre>{{groupedCotizaciones | json}}</pre> -->
+<ng-container *ngFor="let group of groupedCotizaciones">
+
+  <!-- Encabezado del grupo -->
+  <h5 class="text-left mt-3 mb-2">{{ group.fecha | date: 'dd MMM yyyy'}}</h5>
+  <div class="table-responsive w-100 card">
+    <table class="table table-sm">
+      <thead>
+        <tr class="text-center">
+          <th>#</th>
+          <th>Cliente</th>
+          <th>IVA</th>
+          <th>Subtotal</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Usuario</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let cotizacion of group.cotizaciones; let i = index">
+          <!-- Fila principal de la cotización -->
+          <tr class="text-center">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ cotizacion.info_cliente?.nombre }}</td>
+            <td class="text-center">{{ cotizacion.iva | currency }}</td>
+            <td class="text-center">{{ cotizacion.subtotal | currency }}</td>
+            <td class="text-center">{{ cotizacion.total | currency }}</td>
+            <td class="text-center">
+              <span [ngStyle]="{ 'color': cotizacion.estado_info?.color }" class="text-center">
+                {{ cotizacion.estado_info?.item }}
+              </span>
+            </td>
+            <td class="text-center td-user text-muted">{{ cotizacion.user }}</td>
+            <td class="text-center d-flex justify-content-center">
+              <button *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0" type="button"
+                class="btn btn-sm btn-light-info" (click)="toggleDetalles(cotizacion.id)">
+                <i class="feather" [class]="isDetalleVisible(cotizacion.id) ? 'icon-eye-off' : 'icon-eye'"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-light-danger mx-1" (click)="deleteCotizacion(cotizacion.id)">
+                <i class="feather icon-trash"></i>
+              </button>
+
+              <app-cotizacion-form [isEditMode]="true" [cotizacionExistente]="cotizacion"
+                (cotizacionGuardada)="actualizarListaCotizaciones()" />
+              <app-enviar-cotizacion [cotizacionId]="cotizacion.id" />
+            </td>
+          </tr>
+          <!-- Fila de detalles de la cotización -->
+          <tr *ngIf="isDetalleVisible(cotizacion.id)">
+            <td colspan="8">
+              <div *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0">
+                <table class="table table-sm table-bordered mb-0">
+                  <thead>
+                    <tr class="text-center">
+                      <th>Cantidad</th>
+                      <th>Producto</th>
+                      <th>Paquete</th>
+                      <th>Costo</th>
+                      <th>Descuento</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let detalle of cotizacion.detalles; let j = index">
+                      <td class="text-center">{{ detalle.cantidad }}</td>
+                      <td class="text-center">{{ detalle.info_producto?.producto }}</td>
+                      <td class="text-center">{{ detalle.info_paquete?.nombre_paquete }}</td>
+                      <ng-container *ngIf="detalle.info_producto; else paquete">
+                        <td class="text-center">{{ detalle.info_producto?.costo*detalle.cantidad }}</td>
+                      </ng-container>
+                      <ng-template #paquete>
+                        <td class="text-center">{{ detalle.info_paquete?.precio_total * detalle.cantidad}}</td>
+                      </ng-template>
+
+                      <td class="text-center">{{ detalle.descuento }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="!(cotizacion.detalles && cotizacion.detalles.length > 0)" class="text-center">
+                <em>Esta cotización no tiene detalles.</em>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
