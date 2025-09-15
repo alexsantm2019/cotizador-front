@@ -14,6 +14,8 @@
 
     <app-card cardTitle="Productos" [options]="false" blockClass="table-border-style">
       <div class="table-responsive">
+        <!-- Buscador -->
+        <app-producto-search (searchChange)="onSearch($event)"></app-producto-search>
         <table class="table table-sm table-hover">
           <thead>
             <tr class="text-center">

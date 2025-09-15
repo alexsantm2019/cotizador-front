@@ -67,6 +67,10 @@
               <app-cotizacion-form [isEditMode]="true" [cotizacionExistente]="cotizacion"
                 (cotizacionGuardada)="actualizarListaCotizaciones()" />
               <app-enviar-cotizacion [cotizacionId]="cotizacion.id" />
+              <button type="button" class="btn btn-sm btn-light-warning mx-1" (click)="downloadPDF(cotizacion.id)">
+                <i class="feather icon-download"></i>
+              </button>
+
             </td>
           </tr>
           <!-- Fila de detalles de la cotización -->

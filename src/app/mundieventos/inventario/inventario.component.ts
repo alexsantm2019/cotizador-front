@@ -1,5 +1,5 @@
 // angular import
-import {AfterViewInit, OnInit, ViewChild, inject, TemplateRef } from '@angular/core';
+import { AfterViewInit, OnInit, ViewChild, inject, TemplateRef, signal, computed } from '@angular/core';
 import { Component } from '@angular/core';
 import { NgbModal, NgbModalRef, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -11,32 +11,43 @@ import { Notyf } from 'notyf';
 // Servicio:
 import { ProductosService } from '../services/productos/productos.service'
 import { ProductosInterface } from '../models/productos.model';
+import { InventarioSearchComponent } from "./inventario-search/inventario-search.component";
 
 @Component({
   selector: 'app-inventario',
   standalone: true,
-  imports: [SharedModule, NgbModalModule],
+  imports: [SharedModule, NgbModalModule, InventarioSearchComponent],
   templateUrl: './inventario.component.html',
   styleUrls: ['./inventario.component.scss']
 })
-export class InventarioComponent implements OnInit{
+export class InventarioComponent implements OnInit {
 
   private productosService = inject(ProductosService);
-  private  notyf = new Notyf();
-  productosInventario: ProductosInterface[] = [];
+  private notyf = new Notyf();
+  // productosInventario: ProductosInterface[] = [];
+  productosInventario = signal<ProductosInterface[]>([]);
   currentPage = 1;
   pageSize = 10;
   minimoProductosInventario = 5;
-  
-  
-  ngOnInit(): void {    
+
+  // Filtro:
+  searchTerm = signal('');
+  filteredInventario = computed(() =>
+    this.productosInventario().filter(item =>
+      item.producto.toLowerCase().includes(this.searchTerm().toLowerCase())
+    )
+  );
+
+
+  ngOnInit(): void {
     this.getProductosInventario();
   }
 
   getProductosInventario(): void {
     this.productosService.getProductosInventario().subscribe({
       next: (data) => {
-        this.productosInventario = data;
+        // this.productosInventario = data;
+        this.productosInventario.set(data);
       },
       error: (error) => {
         console.error('Error en la búsqueda de productos:', error);
@@ -54,14 +65,13 @@ export class InventarioComponent implements OnInit{
       },
       error: (error) => {
         this.showError('Error al actualizar el inventario')
-        // console.error('Error al actualizar el inventario:', error);
       }
     });
   }
 
   getPagedInventario(): ProductosInterface[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.productosInventario.slice(startIndex, startIndex + this.pageSize);
+    return this.filteredInventario().slice(startIndex, startIndex + this.pageSize);
   }
 
   getPageArray(length: number): number[] {
@@ -69,10 +79,14 @@ export class InventarioComponent implements OnInit{
     return Array.from({ length: pageCount }, (_, i) => i + 1);
   }
 
-  showSuccess(msg:any) {
+  onSearch(term: string) {
+    this.searchTerm.set(term);
+  }
+
+  showSuccess(msg: any) {
     this.notyf.success(msg);
   }
-  showError(msg:any) {
+  showError(msg: any) {
     this.notyf.error(msg);
   }
 

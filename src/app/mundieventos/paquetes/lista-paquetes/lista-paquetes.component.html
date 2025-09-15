@@ -5,6 +5,8 @@
       <span>Nuevo paquete</span>
     </button>
     <app-card cardTitle="Paquetes" [options]="false" blockClass="table-border-style">
+      <!-- Buscador -->
+      <app-paquete-search (searchChange)="onSearch($event)"></app-paquete-search>
       <div class="table-responsive w-100">
         <table class="table table-hover table-sm">
           <thead>
@@ -26,29 +28,19 @@
                 <td>{{ paquete.descripcion }}</td>
                 <td class="text-center">{{ paquete.precio_total | currency }}</td>
                 <td class="text-center">
-                  <span
-                    [ngClass]="{
+                  <span [ngClass]="{
                       'text-success text-center': paquete.estado === 1,
                       'text-danger text-center': paquete.estado !== 1
-                    }"
-                  >
+                    }">
                     {{ paquete.estado === 1 ? 'Activo' : 'Inactivo' }}
                   </span>
                 </td>
                 <td class="text-center">
-                  <button
-                    *ngIf="paquete.detalles && paquete.detalles.length > 0"
-                    type="button"
-                    class="btn btn-sm btn-light-info"
-                    (click)="toggleDetalles(paquete.id)"
-                  >
+                  <button *ngIf="paquete.detalles && paquete.detalles.length > 0" type="button"
+                    class="btn btn-sm btn-light-info" (click)="toggleDetalles(paquete.id)">
                     <i class="feather" [class]="isDetalleVisible(paquete.id) ? 'icon-eye-off' : 'icon-eye'"></i>
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-light-danger mx-1"
-                    (click)="deletePaquete(paquete.id)"
-                  >
+                  <button type="button" class="btn btn-sm btn-light-danger mx-1" (click)="deletePaquete(paquete.id)">
                     <i class="feather icon-trash"></i>
                   </button>
                   <button type="button" class="btn btn-sm btn-light-primary" (click)="editarPaquete(paquete.id)">
@@ -99,17 +91,11 @@
             <li class="page-item" [class.disabled]="currentPage === 1">
               <a class="page-link" (click)="currentPage = currentPage - 1">Anterior</a>
             </li>
-            <li
-              class="page-item"
-              *ngFor="let page of getPageArray(paquetes.length)"
-              [class.active]="page === currentPage"
-            >
+            <li class="page-item" *ngFor="let page of getPageArray(paquetes.length)"
+              [class.active]="page === currentPage">
               <a class="page-link" (click)="currentPage = page">{{ page }}</a>
             </li>
-            <li
-              class="page-item"
-              [class.disabled]="currentPage === getPageArray(paquetes.length).length"
-            >
+            <li class="page-item" [class.disabled]="currentPage === getPageArray(paquetes.length).length">
               <a class="page-link" (click)="currentPage = currentPage + 1">Siguiente</a>
             </li>
           </ul>

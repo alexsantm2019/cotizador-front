@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-12">
-
+    <app-inventario-search (searchChange)="onSearch($event)"></app-inventario-search>
     <app-card cardTitle="Inventario" [options]="false" blockClass="table-border-style">
       <div class="table-responsive">
         <table class="table table-sm table-hover">
@@ -16,12 +16,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let producto of getPagedInventario(); let i = index"
-            [ngClass]="{
+            <tr *ngFor="let producto of getPagedInventario(); let i = index" [ngClass]="{
               'bg-danger-light': !producto.cantidad || producto.cantidad === 0,
               'bg-warning-light': producto.cantidad > 0 && producto.cantidad <= minimoProductosInventario
-            }"
-            >
+            }">
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ producto.producto }}</td>
               <td>{{ producto.descripcion }}</td>

@@ -44,4 +44,4 @@ import { NgbDropdownModule, NgbNavModule, NgbModule } from '@ng-bootstrap/ng-boo
   ],
   declarations: [DataFilterPipe, SpinnerComponent]
 })
-export class SharedModule {}
+export class SharedModule { }

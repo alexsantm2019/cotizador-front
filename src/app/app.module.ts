@@ -26,6 +26,8 @@ import { NavGroupComponent } from './theme/layout/admin/navigation/nav-content/n
 import { NavItemComponent } from './theme/layout/admin/navigation/nav-content/nav-item/nav-item.component';
 import { SharedModule } from './theme/shared/shared.module';
 import { AuthInterceptor } from './mundieventos/services/auth/auth.interceptor';
+import { HttpInterceptorService } from '../app/mundieventos/core/interceptors/http.interceptor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,10 +47,15 @@ import { AuthInterceptor } from './mundieventos/services/auth/auth.interceptor';
     NavCollapseComponent,
     NavGroupComponent,
   ],
-  imports: [HttpClientModule, BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule],
+  imports: [HttpClientModule, FormsModule, BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpInterceptorService,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

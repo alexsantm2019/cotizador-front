@@ -1,5 +1,5 @@
 // angular import
-import {AfterViewInit, OnInit, ViewChild, inject, TemplateRef } from '@angular/core';
+import { AfterViewInit, OnInit, ViewChild, inject, TemplateRef, signal, computed } from '@angular/core';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable, catchError, tap, throwError } from 'rxjs';
@@ -14,21 +14,23 @@ import { Notyf } from 'notyf';
 // Servicio:
 import { PaquetesService } from '../../services/paquetes/paquetes.service'
 import { PaqueteInterface } from '../../models/paquetes.models';
+import { PaqueteSearchComponent } from "../paquete-search/paquete-search.component";
 
 @Component({
   selector: 'app-lista-paquetes',
   standalone: true,
-  imports: [SharedModule,  NgbModalModule],
+  imports: [SharedModule, NgbModalModule, PaqueteSearchComponent],
   templateUrl: './lista-paquetes.component.html',
   styleUrls: ['./lista-paquetes.component.scss']
 })
 export class ListaPaquetesComponent implements OnInit {
-  
-  constructor(private router: Router) {}
-  private  notyf = new Notyf();
+
+  constructor(private router: Router) { }
+  private notyf = new Notyf();
 
   private paquetesService = inject(PaquetesService);
-  paquetes: PaqueteInterface[] = [];
+  // paquetes: PaqueteInterface[] = [];
+  paquetes = signal<PaqueteInterface[]>([]);
   currentPage = 1;
   pageSize = 10;
   itemsPerPage: number = 15;
@@ -36,6 +38,14 @@ export class ListaPaquetesComponent implements OnInit {
   paqueteSeleccionado: PaqueteInterface | null = null;
   expandedPaquetes: { [key: number]: boolean } = {};
   visibleDetallesId: number | null = null;
+
+  // Filtro:
+  searchTerm = signal('');
+  filteredPaquetes = computed(() =>
+    this.paquetes().filter(item =>
+      item.nombre_paquete.toLowerCase().includes(this.searchTerm().toLowerCase())
+    )
+  );
 
   ngOnInit(): void {
     this.getPaquetes();
@@ -55,7 +65,8 @@ export class ListaPaquetesComponent implements OnInit {
   getPaquetes(): void {
     this.paquetesService.getPaquetes().subscribe({
       next: (data) => {
-        this.paquetes = data;
+        // this.paquetes = data;
+        this.paquetes.set(data);
       },
       error: (error) => {
         console.error('Error en la búsqueda de paquetes:', error);
@@ -64,15 +75,19 @@ export class ListaPaquetesComponent implements OnInit {
   }
 
   // Calcula los paquetes de la página actual
+  // getPagedPaquetes(): PaqueteInterface[] {
+  //   const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  //   const endIndex = startIndex + this.itemsPerPage;
+  //   return this.paquetes.slice(startIndex, endIndex);
+  // }
   getPagedPaquetes(): PaqueteInterface[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return this.paquetes.slice(startIndex, endIndex);
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.filteredPaquetes().slice(startIndex, startIndex + this.pageSize);
   }
+
 
   // Cambia la página de la tabla
   changePage(page: number): void {
-    console.log('changePage called, new page:', page);
     this.currentPage = page;
   }
 
@@ -86,15 +101,15 @@ export class ListaPaquetesComponent implements OnInit {
   deletePaquete(id: number): void {
     console.log('Eliminar paquete con id:', id);
     this.paquetesService.deletePaquete(id)
-    .subscribe(
-      (response: any) => {      
-        this.getPaquetes();
-        this.showSuccess("Registro eliminado correctamente");
-      }, 
-      (error: any) => {
+      .subscribe(
+        (response: any) => {
+          this.getPaquetes();
+          this.showSuccess("Registro eliminado correctamente");
+        },
+        (error: any) => {
           console.log("Error" + JSON.stringify(error))
           this.showError(error);
-      }) 
+        })
     // Lógica de eliminación aquí...
   }
 
@@ -106,10 +121,15 @@ export class ListaPaquetesComponent implements OnInit {
     this.router.navigate(['/editar-paquete', id]);
   }
 
-  showSuccess(msg:any) {
+  //Filtro:
+  onSearch(term: string) {
+    this.searchTerm.set(term);
+  }
+
+  showSuccess(msg: any) {
     this.notyf.success(msg);
   }
-  showError(msg:any) {
+  showError(msg: any) {
     this.notyf.error(msg);
   }
 
