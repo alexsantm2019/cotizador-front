@@ -12,8 +12,8 @@ import { Notyf } from 'notyf';
 // import { NuevoProductoComponent } from '../nuevo-producto/nuevo-producto.component';
 
 // Servicio:
-import { PaquetesService } from '../../services/paquetes/paquetes.service'
-import { PaqueteInterface } from '../../models/paquetes.models';
+import { PaquetesService } from '../../../core/services/paquetes/paquetes.service'
+import { PaqueteInterface } from '../../../core/models/paquetes.models';
 import { PaqueteSearchComponent } from "../paquete-search/paquete-search.component";
 
 @Component({

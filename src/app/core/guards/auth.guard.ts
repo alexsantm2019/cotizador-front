@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from '../services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +8,8 @@ import { AuthService } from './auth.service';
 export class AuthGuard implements CanActivate {
 
   private authService = inject(AuthService);
-  
-  constructor(private router: Router) {}
+
+  constructor(private router: Router) { }
 
   canActivate(): boolean {
     if (this.authService.getToken()) {

@@ -1,5 +1,7 @@
 // Angular Import
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, Output } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-nav-bar',
@@ -13,6 +15,11 @@ export class NavBarComponent {
   windowWidth = window.innerWidth;
   @Output() NavCollapse = new EventEmitter();
   @Output() NavCollapsedMob = new EventEmitter();
+  user: any;
+  private authService = inject(AuthService);
+
+  fullName: string | null = null;
+  logoPath: string = environment.whiteLogo || 'assets/images/logo.png';
 
   // public method
   toggleMobOption() {
@@ -36,5 +43,17 @@ export class NavBarComponent {
     if (this.windowWidth < 992) {
       this.NavCollapsedMob.emit();
     }
+  }
+
+  ngOnInit() {
+    this.fullName = this.authService.getFullName();
+  }
+
+  logout() {
+    this.authService.logout();
+  }
+
+  onImgError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/images/logo.png';
   }
 }

@@ -1,7 +1,7 @@
 // angular import
-import { Component, OnInit,  inject} from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms'; 
-import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons  } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, inject } from '@angular/core';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -10,12 +10,12 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { Notyf } from 'notyf';
 
 // Servicio:
-import { CatalogosService } from '../../services/catalogos/catalogos.service'
-import { CategoriaProductoService } from '../../services/categoria-producto/categoria-producto.service'
-import { PaquetesService } from '../../services/paquetes/paquetes.service'
-import { ProductosService } from '../../services/productos/productos.service'
-import { ProductosInterface } from '../../models/productos.model';
-import { CategoriaProductoInterface } from '../../models/categoria-producto.models';
+import { CatalogosService } from '../../../core/services/catalogos/catalogos.service'
+import { CategoriaProductoService } from '../../../core/services/categoria-producto/categoria-producto.service'
+import { PaquetesService } from '../../../core/services/paquetes/paquetes.service'
+import { ProductosService } from '../../../core/services/productos/productos.service'
+import { ProductosInterface } from '../../../core/models/productos.model';
+import { CategoriaProductoInterface } from '../../../core/models/categoria-producto.models';
 
 @Component({
   selector: 'app-nuevo-paquete',
@@ -24,7 +24,7 @@ import { CategoriaProductoInterface } from '../../models/categoria-producto.mode
   templateUrl: './nuevo-paquete.component.html',
   styleUrls: ['./nuevo-paquete.component.scss']
 })
-export class NuevoPaqueteComponent  implements OnInit  {
+export class NuevoPaqueteComponent implements OnInit {
 
   private paqueteService = inject(PaquetesService);
   private productosService = inject(ProductosService);
@@ -34,11 +34,11 @@ export class NuevoPaqueteComponent  implements OnInit  {
 
   paqueteForm!: FormGroup;
   productos: ProductosInterface[] = [];
-  private  notyf = new Notyf();
-  categoriasProductos: CategoriaProductoInterface[]=[];
-  paqueteId: number | null = null; 
+  private notyf = new Notyf();
+  categoriasProductos: CategoriaProductoInterface[] = [];
+  paqueteId: number | null = null;
 
-  constructor(    
+  constructor(
     private route: ActivatedRoute, // Inyectar el ActivatedRoute
     private router: Router,
     private fb: FormBuilder) {
@@ -52,11 +52,11 @@ export class NuevoPaqueteComponent  implements OnInit  {
 
   ngOnInit(): void {
     this.getProductos();
-    this.getCategoriaProducto(); 
+    this.getCategoriaProducto();
 
     this.activatedRoute.paramMap.subscribe((params) => {
       const id = params.get('paqueteId');
-      console.log("Extrayendo datos de paquete ",id )
+      console.log("Extrayendo datos de paquete ", id)
       this.paqueteId = id ? parseInt(id, 10) : null; // Convierte el ID a número
       if (this.paqueteId) {
         this.loadPaqueteData(this.paqueteId);
@@ -64,7 +64,7 @@ export class NuevoPaqueteComponent  implements OnInit  {
     });
   }
 
-  get detalles(): FormArray<FormGroup>  {
+  get detalles(): FormArray<FormGroup> {
     return this.paqueteForm.get('detalles') as FormArray<FormGroup>;
   }
 
@@ -75,7 +75,7 @@ export class NuevoPaqueteComponent  implements OnInit  {
       if (paqueteArray && paqueteArray.length > 0) {
         const paquete = paqueteArray[0];  // Asumiendo que el array contiene un solo paquete
         console.log("Paquete recibido: ", paquete);
-  
+
         // Verificar que paquete no sea undefined
         if (paquete) {
           this.paqueteForm.patchValue({
@@ -83,7 +83,7 @@ export class NuevoPaqueteComponent  implements OnInit  {
             descripcion: paquete.descripcion,
             categoria_producto_id: paquete.categoria_producto_id,
           });
-  
+
           // Poblar detalles
           paquete.detalles?.forEach((detalle: any) => {
             this.detalles.push(
@@ -103,7 +103,7 @@ export class NuevoPaqueteComponent  implements OnInit  {
       }
     });
   }
-  
+
   getProductos(): void {
     this.productosService.getProductos().subscribe({
       next: (data) => {
@@ -122,14 +122,14 @@ export class NuevoPaqueteComponent  implements OnInit  {
   onProductoChange(index: number): void {
     const detalleForm = this.detalles.at(index);
     const productoId = detalleForm.get('producto')?.value;
-  
+
     // Convierte productoId a número si es necesario
     const productoSeleccionado = this.productos.find((p) => p.id === parseInt(productoId, 10));
 
     if (productoSeleccionado) {
       // Establece el costo base del producto
       detalleForm.get('costo_producto')?.setValue(productoSeleccionado.costo);
-  
+
       // Ajusta los campos según el tipo de costo
       // if (productoSeleccionado.tipo_costo === 1) {
       //   detalleForm.get('cantidad')?.enable();
@@ -138,7 +138,7 @@ export class NuevoPaqueteComponent  implements OnInit  {
       //   detalleForm.get('cantidad')?.disable();
       //   detalleForm.get('duracion_horas')?.enable();
       // }
-  
+
       // Actualizamos el costo al cambiar el producto
       this.updateCosto(index);
     } else {
@@ -166,12 +166,12 @@ export class NuevoPaqueteComponent  implements OnInit  {
     const detalleForm = this.detalles.at(index) as FormGroup;
     const productoId = detalleForm.get('producto')?.value;
     const producto = this.productos.find((p) => p.id === parseInt(productoId, 10));
-  
+
     if (producto) {
       const cantidad = detalleForm.get('cantidad')?.value;
       // const duracionHoras = detalleForm.get('duracion_horas')?.value;
       let costoFinal = 0;
-  
+
       // if (producto.tipo_costo === 1 && cantidad > 0) {
       //   // Tipo 1: Multiplicamos por cantidad si cantidad es mayor que 0
       //   costoFinal = producto.costo * cantidad;
@@ -179,8 +179,8 @@ export class NuevoPaqueteComponent  implements OnInit  {
       //   // Tipo 2: Multiplicamos por duracion_horas si duracion_horas es mayor que 0
       //   costoFinal = producto.costo * duracionHoras;
       // }
-      costoFinal = producto.costo * cantidad;      
-  
+      costoFinal = producto.costo * cantidad;
+
       // Establecemos el valor calculado en costo_producto
       detalleForm.get('costo_producto')?.setValue(costoFinal);
     }
@@ -203,11 +203,11 @@ export class NuevoPaqueteComponent  implements OnInit  {
     this.detalles.controls.forEach((detalle: FormGroup) => {
       precioTotal += detalle.get('costo_producto')?.value || 0;  // Si no hay valor, se suma 0
     });
-  
+
     // Asignar el precio total al objeto paqueteData
     const paqueteData = this.paqueteForm.value;
     paqueteData.precio_total = precioTotal;  // Agregar el precio total calculado
-  
+
     // Enviar los datos al servicio
     this.paqueteService.createPaquete(paqueteData).subscribe(
       (response) => {
@@ -225,19 +225,19 @@ export class NuevoPaqueteComponent  implements OnInit  {
   }
 
   updatePaquete(): void {
-   // Sumar los costos de los productos
-   let precioTotal = 0;
-   this.detalles.controls.forEach((detalle: FormGroup) => {
-    const costo = parseFloat(detalle.get('costo_producto')?.value || '0'); // Asegura que el valor sea un número
-    precioTotal += costo;
-  });
- 
-   // Asignar el precio total al objeto paqueteData
-   const paqueteData = this.paqueteForm.value;
-   paqueteData.precio_total = precioTotal.toFixed(2);// Agregar el precio total calculado
-   console.log("this.paqueteForm.value", this.paqueteForm.value)
-   console.log("detalles", this.detalles)
-  
+    // Sumar los costos de los productos
+    let precioTotal = 0;
+    this.detalles.controls.forEach((detalle: FormGroup) => {
+      const costo = parseFloat(detalle.get('costo_producto')?.value || '0'); // Asegura que el valor sea un número
+      precioTotal += costo;
+    });
+
+    // Asignar el precio total al objeto paqueteData
+    const paqueteData = this.paqueteForm.value;
+    paqueteData.precio_total = precioTotal.toFixed(2);// Agregar el precio total calculado
+    console.log("this.paqueteForm.value", this.paqueteForm.value)
+    console.log("detalles", this.detalles)
+
     this.paqueteService.updatePaquete(this.paqueteId!, paqueteData).subscribe(
       (response) => {
         this.showSuccess('Paquete actualizado exitosamente');
@@ -249,10 +249,10 @@ export class NuevoPaqueteComponent  implements OnInit  {
       }
     );
   }
-  showSuccess(msg:any) {
+  showSuccess(msg: any) {
     this.notyf.success(msg);
   }
-  showError(msg:any) {
+  showError(msg: any) {
     this.notyf.error(msg);
   }
 

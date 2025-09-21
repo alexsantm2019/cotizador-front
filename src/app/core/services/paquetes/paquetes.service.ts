@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import  { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 import { PaqueteInterface } from '../../models/paquetes.models';
 
@@ -10,17 +10,17 @@ import { PaqueteInterface } from '../../models/paquetes.models';
 })
 export class PaquetesService {
 
-  private server = environment.apiUrl;  
+  private server = environment.apiUrl;
   private apiUrl = `${this.server}/api/paquetes`;
 
-  constructor(private http:HttpClient) { 
+  constructor(private http: HttpClient) {
   }
 
   getPaqueteById(id: number): Observable<PaqueteInterface[]> {
     return this.http.get<PaqueteInterface[]>(`${this.apiUrl}/paquete/${id}`);
   }
 
-  getPaquetes():Observable<PaqueteInterface[]>{
+  getPaquetes(): Observable<PaqueteInterface[]> {
     return this.http.get<PaqueteInterface[]>(`${this.apiUrl}/get_paquetes`);
   }
 

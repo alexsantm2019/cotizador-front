@@ -11,8 +11,8 @@ import { NuevoClienteComponent } from '../nuevo-cliente/nuevo-cliente.component'
 import { Notyf } from 'notyf';
 
 // Servicio:
-import { ClientesService } from '../../services/clientes/clientes.service'
-import { ClientesInterface } from '../../models/clientes.models';
+import { ClientesService } from '../../../core/services/clientes/clientes.service'
+import { ClientesInterface } from '../../../core/models/clientes.models';
 import { ClienteSearchComponent } from "../cliente-search/cliente-search.component";
 
 @Component({

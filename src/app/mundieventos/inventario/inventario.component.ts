@@ -9,8 +9,8 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { Notyf } from 'notyf';
 
 // Servicio:
-import { ProductosService } from '../services/productos/productos.service'
-import { ProductosInterface } from '../models/productos.model';
+import { ProductosService } from '../../core/services/productos/productos.service'
+import { ProductosInterface } from '../../core/models/productos.model';
 import { InventarioSearchComponent } from "./inventario-search/inventario-search.component";
 
 @Component({

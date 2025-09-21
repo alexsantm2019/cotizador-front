@@ -1,18 +1,18 @@
 // angular import
-import {AfterViewInit, OnInit, ViewChild, inject, TemplateRef, Input } from '@angular/core';
+import { AfterViewInit, OnInit, ViewChild, inject, TemplateRef, Input } from '@angular/core';
 import { Component } from '@angular/core';
 import { NgbModal, NgbModalRef, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 // project import
 import { CategoriaFormComponent } from '../categoria-form/categoria-form.component';
 import { ListaCategoriasComponent } from '../lista-categorias/lista-categorias.component';
-import { CategoriaProductoInterface } from '../../models/categoria-producto.models';
+import { CategoriaProductoInterface } from '../../../core/models/categoria-producto.models';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
 @Component({
   selector: 'app-categoria',
   standalone: true,
-  imports: [SharedModule,  NgbModalModule, ListaCategoriasComponent, CategoriaFormComponent],
+  imports: [SharedModule, NgbModalModule, ListaCategoriasComponent, CategoriaFormComponent],
   templateUrl: './categoria-parent.component.html',
   styleUrls: ['./categoria-parent.component.scss']
 })
@@ -20,14 +20,14 @@ export class CategoriaParentComponent implements OnInit {
   @ViewChild('listaCategorias') listaCategorias: ListaCategoriasComponent | undefined;
   categoriaSeleccionada: any = null;
   isEditMode = false;
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
-    
+
   }
 
-  editarCategoria(categoria: any): void {    
-    
+  editarCategoria(categoria: any): void {
+
     this.isEditMode = true;
     console.log("Editando categoria...", this.isEditMode)
     this.categoriaSeleccionada = categoria;

@@ -12,7 +12,7 @@ import { ListaClientesComponent } from './mundieventos/clientes/lista-clientes/l
 import { CotizacionesParentComponent } from './mundieventos/cotizaciones/cotizaciones-parent/cotizaciones-parent.component';
 import { CotizadorComponent } from './mundieventos/cotizaciones/_cotizador/cotizador.component';
 import { LoginComponent } from './mundieventos/login/login.component';
-import { AuthGuard } from './mundieventos/services/auth/auth.guard';
+import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -106,4 +106,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

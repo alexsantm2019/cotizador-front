@@ -1,9 +1,9 @@
 // angular import
-import {TemplateRef, Component, EventEmitter, OnInit, ViewChild, inject, Input, Output, SimpleChanges  } from '@angular/core';
+import { TemplateRef, Component, EventEmitter, OnInit, ViewChild, inject, Input, Output, SimpleChanges } from '@angular/core';
 import { Observable, catchError, tap, throwError } from 'rxjs';
-import { Router, RouterModule,  ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms'; 
-import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons  } from '@ng-bootstrap/ng-bootstrap';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 // import { ToastrService } from 'ngx-toastr';
 
@@ -13,11 +13,11 @@ import { Notyf } from 'notyf';
 // import { ToastComponent } from '../../ui/toast/toast.component';
 
 // Servicio:
-import { ProductosService } from '../../services/productos/productos.service'
-import { CatalogosService } from '../../services/catalogos/catalogos.service'
-import { CategoriaProductoService } from '../../services/categoria-producto/categoria-producto.service'
-import { ProductosInterface } from '../../models/productos.model';
-import { CategoriaProductoInterface } from '../../models/categoria-producto.models';
+import { ProductosService } from '../../../core/services/productos/productos.service'
+import { CatalogosService } from '../../../core/services/catalogos/catalogos.service'
+import { CategoriaProductoService } from '../../../core/services/categoria-producto/categoria-producto.service'
+import { ProductosInterface } from '../../../core/models/productos.model';
+import { CategoriaProductoInterface } from '../../../core/models/categoria-producto.models';
 import { CATALOGOS } from '../../utils/catalogo';
 
 @Component({
@@ -31,9 +31,9 @@ export class NuevoProductoComponent {
 
   private modalService = inject(NgbModal);
   private productosService = inject(ProductosService);
-  private catalogosService = inject(CatalogosService);  
+  private catalogosService = inject(CatalogosService);
   private categoriaProductoService = inject(CategoriaProductoService);
-  private  notyf = new Notyf();
+  private notyf = new Notyf();
 
   @Input() producto: ProductosInterface | null = null; // Producto recibido del padre
   @Input() isEditMode: boolean = false; // Modo edición o creación
@@ -43,15 +43,15 @@ export class NuevoProductoComponent {
   tipoCostos: any;
   estadosProductos: any;
 
-  categoriasProductos: CategoriaProductoInterface[]=[];
-  
+  categoriasProductos: CategoriaProductoInterface[] = [];
+
   constructor(
     private formBuilder: FormBuilder) {
-    this.productoForm = this.formBuilder.group({   
-      id: [null],   
+    this.productoForm = this.formBuilder.group({
+      id: [null],
       producto: ['', [Validators.required]],
-      descripcion: [''],      
-      tipo_costo: ['', [Validators.required]],      
+      descripcion: [''],
+      tipo_costo: ['', [Validators.required]],
       costo: [0, [Validators.required, Validators.min(0)]],
       ubicacion: [''],
       estado: ['', [Validators.required]],
@@ -75,7 +75,7 @@ export class NuevoProductoComponent {
     }
 
     const formValue = this.productoForm.value; // Obtén solo los valores del formulario
-  
+
     if (this.isEditMode) {
       const id = formValue.id; // Extrae el ID del formulario
       this.productosService.updateProducto(id, formValue).subscribe({
@@ -100,7 +100,7 @@ export class NuevoProductoComponent {
     }
   }
 
-  resetForm(): void {    
+  resetForm(): void {
     this.productoForm.reset(); // Resetea los valores
 
     // Se asegura de que el formulario esté limpio
@@ -151,10 +151,10 @@ export class NuevoProductoComponent {
     });
   }
 
-  showSuccess(msg:any) {
+  showSuccess(msg: any) {
     this.notyf.success(msg);
   }
-  showError(msg:any) {
+  showError(msg: any) {
     this.notyf.error(msg);
   }
 

@@ -1,0 +1,17 @@
+.navbar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.navbar-content .pcoded-inner-navbar {
+    flex: 1;
+    /* ocupa todo el espacio disponible */
+}
+
+.navbar-content .version {
+    margin-top: auto;
+    /* empuja al fondo */
+    padding: 1rem;
+    /* opcional */
+}

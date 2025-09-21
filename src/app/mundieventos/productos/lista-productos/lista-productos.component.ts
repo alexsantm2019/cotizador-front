@@ -11,8 +11,8 @@ import { NuevoProductoComponent } from '../nuevo-producto/nuevo-producto.compone
 import { Notyf } from 'notyf';
 
 // Servicio:
-import { ProductosService } from '../../services/productos/productos.service'
-import { ProductosInterface } from '../../models/productos.model';
+import { ProductosService } from '../../../core/services/productos/productos.service'
+import { ProductosInterface } from '../../../core/models/productos.model';
 import { ProductoSearchComponent } from "../producto-search/producto-search.component";
 
 @Component({

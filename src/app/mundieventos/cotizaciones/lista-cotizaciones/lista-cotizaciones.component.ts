@@ -13,11 +13,11 @@ import { Notyf } from 'notyf';
 // Servicio:
 import { CotizadorFormComponent } from '../cotizacion-form/cotizacion-form.component';
 import { EnviarCotizacionComponent } from '../_enviar-cotizacion/enviar-cotizacion.component';
-import { PaqueteInterface } from '../../models/paquetes.models';
-import { CotizacionesService } from '../../services/cotizador/cotizador.service'
-import { CotizacionInterface } from '../../models/cotizaciones.model';
-import { ClientesService } from '../../services/clientes/clientes.service'
-import { ClientesInterface } from '../../models/clientes.models';
+import { PaqueteInterface } from '../../../core/models/paquetes.models';
+import { CotizacionesService } from '../../../core/services/cotizador/cotizador.service'
+import { CotizacionInterface } from '../../../core/models/cotizaciones.model';
+import { ClientesService } from '../../../core/services/clientes/clientes.service'
+import { ClientesInterface } from '../../../core/models/clientes.models';
 
 @Component({
   selector: 'app-lista-cotizaciones',

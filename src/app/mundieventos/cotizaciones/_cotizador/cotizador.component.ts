@@ -1,6 +1,6 @@
 // angular import
-import { Component, OnInit,  inject, ChangeDetectorRef, EventEmitter, Output, Input, SimpleChanges } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms'; 
+import { Component, OnInit, inject, ChangeDetectorRef, EventEmitter, Output, Input, SimpleChanges } from '@angular/core';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -9,15 +9,15 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { Notyf } from 'notyf';
 
 // Servicio:
-import { ClientesService } from '../../services/clientes/clientes.service'
-import { PaquetesService } from '../../services/paquetes/paquetes.service'
-import { ProductosService } from '../../services/productos/productos.service'
-import { CotizacionesService } from '../../services/cotizador/cotizador.service'
+import { ClientesService } from '../../../core/services/clientes/clientes.service'
+import { PaquetesService } from '../../../core/services/paquetes/paquetes.service'
+import { ProductosService } from '../../../core/services/productos/productos.service'
+import { CotizacionesService } from '../../../core/services/cotizador/cotizador.service'
 
-import { ProductosInterface } from '../../models/productos.model';
-import { ClientesInterface } from '../../models/clientes.models';
-import { PaqueteInterface } from '../../models/paquetes.models';
-import { DetalleInterface } from '../../models/detalles.models';
+import { ProductosInterface } from '../../../core/models/productos.model';
+import { ClientesInterface } from '../../../core/models/clientes.models';
+import { PaqueteInterface } from '../../../core/models/paquetes.models';
+import { DetalleInterface } from '../../../core/models/detalles.models';
 
 @Component({
   selector: 'app-cotizador',
@@ -26,7 +26,7 @@ import { DetalleInterface } from '../../models/detalles.models';
   templateUrl: './cotizador.component.html',
   styleUrls: ['./cotizador.component.scss']
 })
-export class CotizadorComponent  implements OnInit  {
+export class CotizadorComponent implements OnInit {
 
   private clientesService = inject(ClientesService);
   private paquetesService = inject(PaquetesService);
@@ -45,17 +45,17 @@ export class CotizadorComponent  implements OnInit  {
   clientes: ClientesInterface[] = [];
   paquetes: PaqueteInterface[] = [];
   productos: ProductosInterface[] = [];
-  itemsCotizacion: any[] = []; 
+  itemsCotizacion: any[] = [];
   ivaOptions = [
     { value: 0, label: '0%' },
     { value: 15, label: '15%' }
   ];
 
   paqueteForm!: FormGroup;
-  private  notyf = new Notyf();  
-  
-  constructor(    
-    private cdr: ChangeDetectorRef) {    
+  private notyf = new Notyf();
+
+  constructor(
+    private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -74,10 +74,10 @@ export class CotizadorComponent  implements OnInit  {
   cargarCotizacion(cotizacion: any): void {
     if (cotizacion) {
       // console.log("Cargando cotización existente:", cotizacion);
-  
+
       // Limpia itemsCotizacion para evitar datos duplicados
       this.itemsCotizacion = [];
-      
+
       // Reutiliza poblarItemsCotizacion para construir los items
       this.poblarItemsCotizacion(cotizacion);
     }
@@ -136,7 +136,7 @@ export class CotizadorComponent  implements OnInit  {
       },
     });
   }
-    
+
   getProductos(): void {
     this.productosService.getProductos().subscribe({
       next: (data) => {
@@ -163,27 +163,27 @@ export class CotizadorComponent  implements OnInit  {
     });
   }
 
-  actualizarTotal(index: number): void {   
+  actualizarTotal(index: number): void {
     const item = this.itemsCotizacion[index];
     // Validar que la cantidad sea al menos 1
     if (item.cantidad < 1) {
       item.cantidad = 1;
     }
-  
+
     // Asegurarse de que el descuento no sea negativo ni indefinido
     if (item.descuento === null || item.descuento === undefined || isNaN(item.descuento)) {
       item.descuento = 0; // Restablece a 0 si el valor es inválido
     }
-    
+
     if (item.descuento < 0) {
       item.descuento = 0; // Descuento no puede ser negativo
     }
-  
+
     // Calcular el subtotal y el total considerando el descuento
     const subtotal = item.cantidad * item.precio_unitario;
     item.total = subtotal - item.descuento;
 
-    
+
     // Evitar que el total sea negativo
     if (item.total < 0) {
       item.total = 0;
@@ -193,11 +193,11 @@ export class CotizadorComponent  implements OnInit  {
   eliminarItem(index: number): void {
     this.itemsCotizacion.splice(index, 1);
   }
-  
-  showSuccess(msg:any) {
+
+  showSuccess(msg: any) {
     this.notyf.success(msg);
   }
-  showError(msg:any) {
+  showError(msg: any) {
     this.notyf.error(msg);
   }
   agregarProducto(): void {
@@ -215,7 +215,7 @@ export class CotizadorComponent  implements OnInit  {
       this.producto = null; // Resetea el select
     }
   }
-  
+
   agregarPaquete(): void {
     if (this.paquete) {
       this.itemsCotizacion.push({
@@ -231,28 +231,28 @@ export class CotizadorComponent  implements OnInit  {
 
       this.paquetesService.getPaqueteById(this.paquete.id).subscribe(paqueteData => {
         const paquete = paqueteData[0]; // El paquete viene dentro de un array
-          // Comprobamos si detalles existe y es un array
-          if (paquete && Array.isArray(paquete.detalles)) {
-            // Llamamos a los detalles del paquete
-            paquete.detalles.forEach(detalle => {
-              const cantidad = detalle.cantidad || 0; // Asegura que cantidad sea un número válido
-              const costoProducto = detalle.costo_producto || 0;
-              const precioUnitario = cantidad > 0 ? costoProducto / cantidad : 0;
-              // Aquí asignamos tipo_item 3 a los productos dentro del paquete
-              this.itemsCotizacion.push({
-                id: detalle.producto.id,
-                nombre: detalle.producto.producto,
-                cantidad: cantidad,
-                descuento: 0,
-                precio_unitario: precioUnitario,
-                total: costoProducto, 
-                tipo: 3, 
-                disable: false
-              });
+        // Comprobamos si detalles existe y es un array
+        if (paquete && Array.isArray(paquete.detalles)) {
+          // Llamamos a los detalles del paquete
+          paquete.detalles.forEach(detalle => {
+            const cantidad = detalle.cantidad || 0; // Asegura que cantidad sea un número válido
+            const costoProducto = detalle.costo_producto || 0;
+            const precioUnitario = cantidad > 0 ? costoProducto / cantidad : 0;
+            // Aquí asignamos tipo_item 3 a los productos dentro del paquete
+            this.itemsCotizacion.push({
+              id: detalle.producto.id,
+              nombre: detalle.producto.producto,
+              cantidad: cantidad,
+              descuento: 0,
+              precio_unitario: precioUnitario,
+              total: costoProducto,
+              tipo: 3,
+              disable: false
             });
-          } else {
-            console.warn('El paquete no tiene detalles o detalles es undefined.');
-          }
+          });
+        } else {
+          console.warn('El paquete no tiene detalles o detalles es undefined.');
+        }
       });
       this.paquete = null; // Resetea el select
     }
@@ -273,7 +273,7 @@ export class CotizadorComponent  implements OnInit  {
         descuento: parseFloat(item.descuento)
       }))
     };
-  
+
     if (cotizacion.id) {
       // Editar cotización existente
       this.cotizacionesService.updateCotizacion(cotizacion.id, cotizacion).subscribe({
@@ -307,7 +307,7 @@ export class CotizadorComponent  implements OnInit  {
       return !isNaN(itemTotal) ? sum + itemTotal : sum;
     }, 0);
   }
-  
+
   calcularTotal(): number {
     const subtotal = this.calcularSubtotal();
     return subtotal + (subtotal * (this.iva / 100));

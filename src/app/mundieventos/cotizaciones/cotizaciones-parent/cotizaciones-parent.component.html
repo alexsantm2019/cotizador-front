@@ -2,7 +2,6 @@
   <div class="col-lg-12 mb-1">
     <app-cotizacion-form [isEditMode]="false" [cotizacionExistente]="null"
       (cotizacionGuardada)="actualizarListaCotizaciones()" />
-
   </div>
   <div class="col-lg-12">
     <app-lista-cotizaciones #listaCotizaciones (editarCotizacionEvent)="editarCotizacion($event)" />

@@ -5,8 +5,10 @@
     <i class="feather icon-menu"></i>
   </a>
   <a [routerLink]="['/dashboard/analytics']" class="b-brand">
-    <img id="main-logo" src="assets/images/logo.png" alt="logo-img" class="logo" />
-    <img src="assets/images/logo-icon.png" alt="logo-icon-img" class="logo-thumb" />
+    <!-- <img id="main-logo" src="assets/images/logo.png" alt="logo-img" class="logo" />
+    <img src="assets/images/logo-icon.png" alt="logo-icon-img" class="logo-thumb" /> -->
+    <img id="main-logo" [src]="logoPath" alt="logo-img" class="logo" width="180" height="50"
+      (error)="onImgError($event)" />
   </a>
   <a class="mob-toggler" [ngClass]="{ on: this.menuClass }" href="javascript:" (click)="toggleMobOption()">
     <i class="feather icon-more-vertical"></i>

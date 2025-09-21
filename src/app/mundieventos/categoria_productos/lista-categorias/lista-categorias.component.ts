@@ -1,5 +1,5 @@
 // angular import
-import {AfterViewInit, OnInit, ViewChild, inject, TemplateRef, Output, EventEmitter } from '@angular/core';
+import { AfterViewInit, OnInit, ViewChild, inject, TemplateRef, Output, EventEmitter } from '@angular/core';
 import { Component } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { Observable, catchError, tap, throwError } from 'rxjs';
@@ -10,8 +10,8 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { Notyf } from 'notyf';
 
 // Servicio:
-import { CategoriaProductoService } from '../../services/categoria-producto/categoria-producto.service'
-import { CategoriaProductoInterface } from '../../models/categoria-producto.models';
+import { CategoriaProductoService } from '../../../core/services/categoria-producto/categoria-producto.service'
+import { CategoriaProductoInterface } from '../../../core/models/categoria-producto.models';
 
 @Component({
   selector: 'app-lista-categorias',
@@ -20,18 +20,18 @@ import { CategoriaProductoInterface } from '../../models/categoria-producto.mode
   templateUrl: './lista-categorias.component.html',
   styleUrls: ['./lista-categorias.component.scss']
 })
-export class ListaCategoriasComponent implements OnInit{
+export class ListaCategoriasComponent implements OnInit {
 
   @Output() editarCategoriaEvent = new EventEmitter<CategoriaProductoInterface>(); // Evento de edición
 
   private categoriaProductosService = inject(CategoriaProductoService);
-  private  notyf = new Notyf();
+  private notyf = new Notyf();
   categoriaProductos: CategoriaProductoInterface[] = [];
   currentPage = 1;
   pageSize = 5;
-  isEditMode: boolean  = false;
+  isEditMode: boolean = false;
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.getCategoriaProductos();
   }
 
@@ -68,20 +68,20 @@ export class ListaCategoriasComponent implements OnInit{
     this.editarCategoriaEvent.emit(categoria); // Emitimos la categoría seleccionada
   }
 
-  deleteCategoria(id:number ){
+  deleteCategoria(id: number) {
     this.categoriaProductosService.deleteCategoriaProducto(id).subscribe({
       next: () => {
         this.showSuccess('Registro eliminado correctamente');
-        this.getCategoriaProductos();        
+        this.getCategoriaProductos();
       },
       error: (error) => console.error('Error al eliminar:', error),
     });
   }
 
-  showSuccess(msg:any) {
+  showSuccess(msg: any) {
     this.notyf.success(msg);
   }
-  showError(msg:any) {
+  showError(msg: any) {
     this.notyf.error(msg);
   }
 

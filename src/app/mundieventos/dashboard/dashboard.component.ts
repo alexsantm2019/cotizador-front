@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../services/auth/auth.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 
 import { EstadisticasCotizacionesComponent } from '../estadisticas/estadisticas-cotizaciones/estadisticas-cotizaciones.component';
 
@@ -16,12 +16,12 @@ export class DashboardComponent {
 
   private authService = inject(AuthService);
 
-  constructor( private router: Router) {}
+  constructor(private router: Router) { }
 
 
   logout() {
-    this.authService.logout(); // Llama al método logout del servicio
-    this.router.navigate(['/login']); // Redirige al usuario a la página de login
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
- 
+
 }

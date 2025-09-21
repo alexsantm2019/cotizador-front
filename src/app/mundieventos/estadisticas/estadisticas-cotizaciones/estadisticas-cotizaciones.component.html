@@ -1,5 +1,70 @@
 <div class="row w-100">
 
+  <div class="col-lg-12 ">
+
+    <div class="row">
+      <div class="col-lg-3">
+
+        <app-card [hidHeader]="true" blockClass="text-center">
+          <i class="fa fa-tag text-c-green d-block f-40"></i>
+          <h4 class="m-t-20">
+            <span class="text-c-green">{{productos.length}}</span>
+            Productos
+          </h4>
+        </app-card>
+      </div>
+      <div class="col-lg-3">
+        <app-card [hidHeader]="true" blockClass="text-center">
+          <i class="fa fa-box-open text-c-blue d-block f-40"></i>
+          <h4 class="m-t-20">
+            <span class="text-c-blue">{{paquetes.length}}</span>
+            Paquetes
+          </h4>
+        </app-card>
+      </div>
+      <div class="col-lg-3">
+        <app-card [hidHeader]="true" blockClass="text-center">
+          <i class="fa fa-money-bill text-c-yellow d-block f-40"></i>
+          <h4 class="m-t-20">
+            <span class="text-c-yellow">{{cotizaciones.length}}</span>
+            Cotizaciones
+          </h4>
+        </app-card>
+      </div>
+      <div class="col-lg-3">
+        <app-card [hidHeader]="true" blockClass="text-center">
+          <i class="fa fa-user-tie text-c-red d-block f-40"></i>
+          <h4 class="m-t-20">
+            <span class="text-c-red">{{clientes.length}}</span>
+            Clientes
+          </h4>
+        </app-card>
+      </div>
+    </div>
+
+    <!-- <app-card [hidHeader]="true" cardClass="bg-primary order-card">
+          <h6 class="text-white text-left">Productos</h6>
+          <h2 class="text-end text-white">
+            <i class="feather icon-file-plus  float-start"></i>
+            <span>10</span>
+          </h2>
+          <p class="m-b-0">
+            Productos
+            <span class="float-end">8</span>
+          </p>
+        </app-card> -->
+
+    <!-- <app-card [hidHeader]="true" blockClass="text-center">
+        <i class="fa fa-envelope-open text-c-blue d-block f-40"></i>
+        <h4 class="m-t-20">
+          <span class="text-c-blue">8.62k</span>
+          Subscribers
+        </h4>
+        <p class="m-b-20">Your main list is growing</p>
+        <button class="btn btn-primery btn-sm btn-round">Manage List</button>
+      </app-card> -->
+  </div>
+
   @if(cotizaciones.length > 0){
   <form [formGroup]="filterForm" (ngSubmit)="getCotizaciones()" class="w-100">
     <div class="card">
@@ -18,7 +83,7 @@
         </div>
 
         <div class="col-lg-4">
-          <div class="form-group row">
+          <div class="form-group row text-center">
             <label for="inputEmail3" class="col-sm-4 col-form-label">Año:</label>
             <div class="col-sm-8">
               <select class="form-select" formControlName="year" id="year">
@@ -31,7 +96,7 @@
           <button type="submit" class="btn btn-secondary mx-1" (click)="getCotizaciones()">Filtrar</button>
         </div>
         <div class="col-lg-2">
-          <span class="d-inline mr-4 h4">{{cotizaciones.length}}</span> <span class="ml-3 d-inline">registros</span>
+          <span class="d-inline mr-4 h4">{{cotizaciones.length}} </span> <span class="ml-3 d-inline">registros</span>
         </div>
 
       </div>
@@ -39,20 +104,21 @@
   </form>
 
 
-  <div class="col-md-6">
-    <app-card cardTitle="Pie Chart" [options]="false">
+
+  <div class="col-lg-12 text-center">
+    <app-card cardTitle="Cotizaciones este mes" [options]="false">
       <apx-chart [labels]="pie1CAC.labels!" [chart]="pie1CAC.chart!" [dataLabels]="pie1CAC.dataLabels!"
         [series]="pie1CAC.series!" [colors]="pie1CAC.colors!" [responsive]="pie1CAC.responsive!"
         [legend]="pie1CAC.legend!"></apx-chart>
     </app-card>
   </div>
-  <div class="col-md-6">
+  <!-- <div class="col-md-6">
     <app-card cardTitle="Pie Chart donut" [options]="false">
       <apx-chart [plotOptions]="pie2CAC.plotOptions!" [chart]="pie2CAC.chart!" [dataLabels]="pie2CAC.dataLabels!"
         [series]="pie2CAC.series!" [colors]="pie2CAC.colors!" [responsive]="pie2CAC.responsive!"
         [legend]="pie2CAC.legend!"></apx-chart>
     </app-card>
-  </div>
+  </div> -->
   <!-- [ variant-chart ] end -->
 
   }@else {

@@ -9,10 +9,15 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 
 // Servicio:
-import { CotizacionesService } from '../../services/cotizador/cotizador.service'
-import { CotizacionInterface } from '../../models/cotizaciones.model';
-import { ClientesInterface } from '../../models/clientes.models';
+import { CotizacionesService } from '../../../core/services/cotizador/cotizador.service'
+import { ClientesService } from '../../../core/services/clientes/clientes.service'
+import { ProductosService } from '../../../core/services/productos/productos.service'
+import { PaquetesService } from '../../../core/services/paquetes/paquetes.service'
+import { CotizacionInterface } from '../../../core/models/cotizaciones.model';
+import { ClientesInterface } from '../../../core/models/clientes.models';
 import { months, years } from '../../utils/filtros';
+import { ProductosInterface } from 'src/app/core/models/productos.model';
+import { PaqueteInterface } from 'src/app/core/models/paquetes.models';
 
 @Component({
   selector: 'app-estadisticas-cotizaciones',
@@ -24,9 +29,14 @@ import { months, years } from '../../utils/filtros';
 export class EstadisticasCotizacionesComponent implements OnInit, OnDestroy {
 
   private cotizacionesService = inject(CotizacionesService);
+  private clientesService = inject(ClientesService);
+  private productosService = inject(ProductosService);
+  private paquetesService = inject(PaquetesService);
 
   cotizaciones: CotizacionInterface[] = [];
   clientes: ClientesInterface[] = [];
+  productos: ProductosInterface[] = [];
+  paquetes: PaqueteInterface[] = [];
   chartDB: any;
 
   lastDate!: number;
@@ -128,11 +138,16 @@ export class EstadisticasCotizacionesComponent implements OnInit, OnDestroy {
       month: [new Date().getMonth() + 1], // Mes actual
       year: [new Date().getFullYear()], // Año actual
     });
+
+
   }
 
   // life cycle event
   ngOnInit() {
     this.getCotizaciones();
+    this.getClientes();
+    this.getProductos();
+    this.getPaquetes();
     this.intervalSub = setInterval(() => {
       this.getNewSeries(this.lastDate, { min: 10, max: 90 });
     }, 1000);
@@ -181,9 +196,6 @@ export class EstadisticasCotizacionesComponent implements OnInit, OnDestroy {
   getCotizaciones(): void {
     const year = this.filterForm.get('year')?.value;
     const month = this.filterForm.get('month')?.value;
-
-    console.log("Filtrando por año:", year, "y mes:", month);
-
     this.cotizacionesService.getCotizacionesPorFecha(year, month).subscribe({
       next: (data) => {
         this.cotizaciones = data;
@@ -194,6 +206,37 @@ export class EstadisticasCotizacionesComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error en la búsqueda de cotizaciones:', error);
+      },
+    });
+  }
+
+  getClientes(): void {
+    this.clientesService.getClientes().subscribe({
+      next: (data) => {
+        this.clientes = data;
+      },
+      error: (error) => {
+        console.error('Error en la búsqueda de clientes:', error);
+      },
+    });
+  }
+  getProductos(): void {
+    this.productosService.getProductos().subscribe({
+      next: (data) => {
+        this.productos = data;
+      },
+      error: (error) => {
+        console.error('Error en la búsqueda de clientes:', error);
+      },
+    });
+  }
+  getPaquetes(): void {
+    this.paquetesService.getPaquetes().subscribe({
+      next: (data) => {
+        this.paquetes = data;
+      },
+      error: (error) => {
+        console.error('Error en la búsqueda de clientes:', error);
       },
     });
   }

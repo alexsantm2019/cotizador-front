@@ -1,94 +1,87 @@
 <div class="row">
-  <div class="col-sm-12">
-
-    <div class="row mb-1">
-      <div class="col-sm-12">
-
-        <!-- Nuevo producto -->
-        <app-nuevo-producto [producto]="productoSeleccionado" [isEditMode]="isEditMode"
-          (productoGuardado)="onProductoGuardado($event)">
-        </app-nuevo-producto>
-
-      </div>
+  <app-card cardTitle="Productos" [options]="false" blockClass="table-border-style">
+    <div class="d-flex justify-content-between">
+      <!-- Buscador -->
+      <app-producto-search (searchChange)="onSearch($event)"></app-producto-search>
+      <!-- Nuevo producto -->
+      <app-nuevo-producto [producto]="productoSeleccionado" [isEditMode]="isEditMode"
+        (productoGuardado)="onProductoGuardado($event)">
+      </app-nuevo-producto>
     </div>
+    <div class="table-responsive">
+      <table class="table table-sm table-hover">
+        <thead>
+          <tr class="text-center">
+            <th>#</th>
+            <th>Producto</th>
+            <th>Descripción</th>
+            <th>Tipo de costo</th>
+            <th>Costo</th>
+            <th>Ubicación</th>
+            <th>Categoría</th>
+            <th>Estado</th>
+            <th>Usuario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let producto of getPagedProducts(); let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ producto.producto }}</td>
+            <td>{{ producto.descripcion }}</td>
+            <td class="text-center">
+              <span class="text-center">
+                {{ producto.tipo_costo_info?.item }}
+              </span>
+            </td>
+            <td>{{ producto.costo | currency }}</td>
+            <td>{{ producto.ubicacion }}</td>
+            <td class="text-center">
+              <span [ngStyle]="{ 'color': producto.categoria_info?.color }" class="text-center">
+                {{ producto.categoria_info?.categoria }}
+              </span>
+            </td>
+            <td class="text-center">
+              <span [ngStyle]="{ 'color': producto.estado_info?.color }" class="text-center">
+                {{ producto.estado_info?.item }}
+              </span>
+            </td>
+            <td class="text-center text-muted">{{ producto.user }}</td>
+            <td class="text-center">
+              <!-- Edicion de producto -->
+              <app-nuevo-producto [producto]="producto" [isEditMode]="true"
+                (productoGuardado)="onProductoGuardado($event)">
+              </app-nuevo-producto>
+              <!-- Eliminar producto -->
+              <button type="button" class="btn btn-sm btn-light-danger" aria-label="Close"
+                (click)="deleteProducto(producto.id)">
+                <i class="feather icon-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="productos.length === 0">
+            <td colspan="8" class="text-center">No hay productos disponibles</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <app-card cardTitle="Productos" [options]="false" blockClass="table-border-style">
-      <div class="table-responsive">
-        <!-- Buscador -->
-        <app-producto-search (searchChange)="onSearch($event)"></app-producto-search>
-        <table class="table table-sm table-hover">
-          <thead>
-            <tr class="text-center">
-              <th>#</th>
-              <th>Producto</th>
-              <th>Descripción</th>
-              <th>Tipo de costo</th>
-              <th>Costo</th>
-              <th>Ubicación</th>
-              <th>Categoría</th>
-              <th>Estado</th>
-              <th>Usuario</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let producto of getPagedProducts(); let i = index">
-              <th scope="row">{{ i + 1 }}</th>
-              <td>{{ producto.producto }}</td>
-              <td>{{ producto.descripcion }}</td>
-              <td class="text-center">
-                <span class="text-center">
-                  {{ producto.tipo_costo_info?.item }}
-                </span>
-              </td>
-              <td>{{ producto.costo | currency }}</td>
-              <td>{{ producto.ubicacion }}</td>
-              <td class="text-center">
-                <span [ngStyle]="{ 'color': producto.categoria_info?.color }" class="text-center">
-                  {{ producto.categoria_info?.categoria }}
-                </span>
-              </td>
-              <td class="text-center">
-                <span [ngStyle]="{ 'color': producto.estado_info?.color }" class="text-center">
-                  {{ producto.estado_info?.item }}
-                </span>
-              </td>
-              <td class="text-center text-muted">{{ producto.user }}</td>
-              <td class="text-center">
-                <!-- Edicion de producto -->
-                <app-nuevo-producto [producto]="producto" [isEditMode]="true"
-                  (productoGuardado)="onProductoGuardado($event)">
-                </app-nuevo-producto>
-                <!-- Eliminar producto -->
-                <button type="button" class="btn btn-sm btn-light-danger" aria-label="Close"
-                  (click)="deleteProducto(producto.id)">
-                  <i class="feather icon-trash"></i>
-                </button>
-              </td>
-            </tr>
-            <tr *ngIf="productos.length === 0">
-              <td colspan="8" class="text-center">No hay productos disponibles</td>
-            </tr>
-          </tbody>
-        </table>
+      <nav aria-label="Paginación">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="currentPage = currentPage - 1">Anterior</a>
+          </li>
+          <li class="page-item" *ngFor="let page of getPageArray(productos.length)"
+            [class.active]="page === currentPage">
+            <a class="page-link" (click)="currentPage = page">{{ page }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === getPageArray(productos.length).length">
+            <a class="page-link" (click)="currentPage = currentPage + 1">Siguiente</a>
+          </li>
+        </ul>
+      </nav>
 
-        <nav aria-label="Paginación">
-          <ul class="pagination justify-content-center">
-            <li class="page-item" [class.disabled]="currentPage === 1">
-              <a class="page-link" (click)="currentPage = currentPage - 1">Anterior</a>
-            </li>
-            <li class="page-item" *ngFor="let page of getPageArray(productos.length)"
-              [class.active]="page === currentPage">
-              <a class="page-link" (click)="currentPage = page">{{ page }}</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPage === getPageArray(productos.length).length">
-              <a class="page-link" (click)="currentPage = currentPage + 1">Siguiente</a>
-            </li>
-          </ul>
-        </nav>
+    </div>
+  </app-card>
 
-      </div>
-    </app-card>
 
-  </div>
 </div>

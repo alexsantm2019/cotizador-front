@@ -1,10 +1,12 @@
 // angular import
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { Location, LocationStrategy } from '@angular/common';
 
 // project import
 import { environment } from 'src/environments/environment';
 import { NavigationItem, NavigationItems } from '../navigation';
+import { AuthService } from '../../../../../core/services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-content',
@@ -12,6 +14,9 @@ import { NavigationItem, NavigationItems } from '../navigation';
   styleUrls: ['./nav-content.component.scss']
 })
 export class NavContentComponent implements OnInit {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   // version
   title = 'Demo application for version numbering';
   currentApplicationVersion = environment.appVersion;
@@ -69,5 +74,10 @@ export class NavContentComponent implements OnInit {
         last_parent.classList.add('active');
       }
     }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

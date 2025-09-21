@@ -9,7 +9,7 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { NotificationService } from '../../services/notificacion/notificacion.services'; // ajusta la ruta
+import { NotificationService } from '../services/notificacion/notificacion.services'; // ajusta la ruta
 
 @Injectable()
 export class HttpInterceptorService implements HttpInterceptor {
@@ -22,20 +22,20 @@ export class HttpInterceptorService implements HttpInterceptor {
       map((event: HttpEvent<any>) => {
         if (event instanceof HttpResponse) {
           // console.log(`✅ Respuesta HTTP [${event.status}]:`, event);
-          // switch (event.status) {
-          //   case 200:
-          //     this.notify.success('✔️ Operación exitosa');
-          //     break;
-          //   case 201:
-          //     this.notify.success('📦 Recurso creado con éxito');
-          //     break;
-          //   case 204:
-          //     this.notify.success('🗑️ Operación realizada (sin contenido)');
-          //     break;
-          //   default:
-          //     this.notify.success(`ℹ️ Código ${event.status}`);
-          //     break;
-          // }
+          switch (event.status) {
+            case 200:
+              //this.notify.success('✔️ Operación exitosa');
+              break;
+            case 201:
+              this.notify.success('📦 Recurso creado con éxito');
+              break;
+            case 204:
+              this.notify.success('🗑️ Operación realizada (sin contenido)');
+              break;
+            default:
+              this.notify.success(`ℹ️ Código ${event.status}`);
+              break;
+          }
         }
         return event;
       }),

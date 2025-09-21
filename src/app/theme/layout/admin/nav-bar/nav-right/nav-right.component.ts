@@ -1,7 +1,7 @@
 // Angular Import
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
-
+import { AuthService } from '../../../../../core/services/auth/auth.service';
 // bootstrap
 import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
 
@@ -26,6 +26,9 @@ export class NavRightComponent {
   visibleUserList: boolean;
   chatMessage: boolean;
   friendId!: number;
+  private authService = inject(AuthService);
+  fullName: string | null = null;
+
 
   // constructor
   constructor() {
@@ -37,5 +40,13 @@ export class NavRightComponent {
   onChatToggle(friendID: number) {
     this.friendId = friendID;
     this.chatMessage = !this.chatMessage;
+  }
+
+  ngOnInit() {
+    this.fullName = this.authService.getFullName();
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

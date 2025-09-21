@@ -1,10 +1,12 @@
 // angular import
-import {TemplateRef, Component, EventEmitter, OnInit, ViewChild, inject, Input, Output,                                                                       
-  input, output   } from '@angular/core';
+import {
+  TemplateRef, Component, EventEmitter, OnInit, ViewChild, inject, Input, Output,
+  input, output
+} from '@angular/core';
 import { Observable, catchError, tap, throwError } from 'rxjs';
-import { Router, RouterModule,  ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms'; 
-import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons  } from '@ng-bootstrap/ng-bootstrap';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 // import { ToastrService } from 'ngx-toastr';
 
@@ -14,11 +16,11 @@ import { Notyf } from 'notyf';
 // import { ToastComponent } from '../../ui/toast/toast.component';
 
 // Servicio:
-import { ClientesService } from '../../services/clientes/clientes.service'
-import { CatalogosService } from '../../services/catalogos/catalogos.service'
-import { CategoriaProductoService } from '../../services/categoria-producto/categoria-producto.service'
-import { ClientesInterface } from '../../models/clientes.models';
-import { CategoriaProductoInterface } from '../../models/categoria-producto.models';
+import { ClientesService } from '../../../core/services/clientes/clientes.service'
+import { CatalogosService } from '../../../core/services/catalogos/catalogos.service'
+import { CategoriaProductoService } from '../../../core/services/categoria-producto/categoria-producto.service'
+import { ClientesInterface } from '../../../core/models/clientes.models';
+import { CategoriaProductoInterface } from '../../../core/models/categoria-producto.models';
 
 @Component({
   selector: 'app-nuevo-cliente',
@@ -44,17 +46,17 @@ export class NuevoClienteComponent {
 
   clienteForm!: FormGroup;
 
-  private  notyf = new Notyf();
+  private notyf = new Notyf();
 
   constructor(
     private formBuilder: FormBuilder) {
-    this.clienteForm = this.formBuilder.group({   
-      id: [null],   
-      nombre: ['', [Validators.required]],         
-      identificacion: [''],      
-      correo: [''],      
-      telefono: [''],      
-      direccion: [''],            
+    this.clienteForm = this.formBuilder.group({
+      id: [null],
+      nombre: ['', [Validators.required]],
+      identificacion: [''],
+      correo: [''],
+      telefono: [''],
+      direccion: [''],
     })
   }
 
@@ -74,7 +76,7 @@ export class NuevoClienteComponent {
     }
 
     const formValue = this.clienteForm.value; // Obtén solo los valores del formulario
-  
+
     if (this.isEditMode) {
       const id = formValue.id; // Extrae el ID del formulario
       this.clientesService.updateCliente(id, formValue).subscribe({
@@ -113,10 +115,10 @@ export class NuevoClienteComponent {
     }
   }
 
-  showSuccess(msg:any) {
+  showSuccess(msg: any) {
     this.notyf.success(msg);
   }
-  showError(msg:any) {
+  showError(msg: any) {
     this.notyf.error(msg);
   }
 

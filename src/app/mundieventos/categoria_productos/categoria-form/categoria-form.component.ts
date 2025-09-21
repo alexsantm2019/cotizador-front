@@ -1,7 +1,7 @@
 // angular import
-import {TemplateRef, Component, EventEmitter, OnInit, ViewChild, inject, Input, Output, SimpleChanges  } from '@angular/core';
-import { FormsModule } from '@angular/forms'; 
-import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons  } from '@ng-bootstrap/ng-bootstrap';
+import { TemplateRef, Component, EventEmitter, OnInit, ViewChild, inject, Input, Output, SimpleChanges } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 // project import
@@ -9,8 +9,8 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { Notyf } from 'notyf';
 
 // Servicio:
-import { CategoriaProductoService } from '../../services/categoria-producto/categoria-producto.service'
-import { CategoriaProductoInterface } from '../../models/categoria-producto.models';
+import { CategoriaProductoService } from '../../../core/services/categoria-producto/categoria-producto.service'
+import { CategoriaProductoInterface } from '../../../core/models/categoria-producto.models';
 
 @Component({
   selector: 'app-categoria-form',
@@ -27,13 +27,13 @@ export class CategoriaFormComponent {
   @Output() categoriaGuardada = new EventEmitter<void>(); // Evento para notificar cambios
 
   categoriaForm!: FormGroup;
-  private  notyf = new Notyf();
+  private notyf = new Notyf();
 
   constructor(
     private formBuilder: FormBuilder) {
-    this.categoriaForm = this.formBuilder.group({   
-      id: [null],   
-      categoria: ['', [Validators.required]],               
+    this.categoriaForm = this.formBuilder.group({
+      id: [null],
+      categoria: ['', [Validators.required]],
     })
   }
 
@@ -61,7 +61,7 @@ export class CategoriaFormComponent {
     if (this.isEditMode) {
       const id = formValue.id;
       this.categoriaProductoService.updateCategoriaProducto(id, formValue).subscribe({
-        next: () => {          
+        next: () => {
           this.categoriaGuardada.emit(); // Emitimos evento         
           this.showSuccess('Registro actualizado correctamente');
           this.changeEditMode();
@@ -89,14 +89,14 @@ export class CategoriaFormComponent {
     // Se asegura de que el formulario esté limpio
     this.categoriaForm.markAsPristine();
     this.categoriaForm.markAsUntouched();
-    
+
     // Salimos del modo edición
     this.isEditMode = false;
   }
-  showSuccess(msg:any) {
+  showSuccess(msg: any) {
     this.notyf.success(msg);
   }
-  showError(msg:any) {
+  showError(msg: any) {
     this.notyf.error(msg);
   }
 
