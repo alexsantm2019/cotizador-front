@@ -59,7 +59,7 @@
               </button>
             </td>
           </tr>
-          <tr *ngIf="productos.length === 0">
+          <tr *ngIf="getPagedProducts().length === 0">
             <td colspan="8" class="text-center">No hay productos disponibles</td>
           </tr>
         </tbody>

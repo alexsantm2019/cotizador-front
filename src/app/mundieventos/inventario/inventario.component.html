@@ -48,7 +48,7 @@
               <td class="text-center text-muted">{{ producto.user }}</td>
 
             </tr>
-            <tr *ngIf="productosInventario.length === 0">
+            <tr *ngIf="getPagedInventario().length === 0">
               <td colspan="8" class="text-center">No hay productos disponibles</td>
             </tr>
           </tbody>
