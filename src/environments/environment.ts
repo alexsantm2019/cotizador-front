@@ -8,8 +8,8 @@ export const environment = {
   appVersion: packageInfo.version,
   production: false,
   apiUrl: 'http://localhost:8000',
-  whiteLogo: '../assets/images/logos/logo-white.png',
-  mainLogo: '../assets/images/logos/logo.png'
+  whiteLogo: 'assets/images/logos/logo-white.png',
+  mainLogo: 'assets/images/logos/logo.png'
 };
 
 /*
