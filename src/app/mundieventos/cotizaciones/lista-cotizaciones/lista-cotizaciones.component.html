@@ -1,4 +1,5 @@
 <div class="card p-2 d-flex justify-content-center align-middle">
+
   <div class="row my-2 ">
 
     <div class="form-group col-lg-5">
@@ -22,95 +23,148 @@
   </div>
 </div>
 <!-- <pre>{{groupedCotizaciones | json}}</pre> -->
-<ng-container *ngFor="let group of groupedCotizaciones">
+<app-delay-animations [delay]="1000">
+  <ng-container *ngFor="let group of groupedCotizaciones">
 
-  <!-- Encabezado del grupo -->
-  <h5 class="text-left mt-3 mb-2">{{ group.fecha | date: 'dd MMM yyyy'}}</h5>
-  <div class="table-responsive w-100 card">
-    <table class="table table-sm">
-      <thead>
-        <tr class="text-center">
-          <th>#</th>
-          <th>Cliente</th>
-          <th>IVA</th>
-          <th>Subtotal</th>
-          <th>Total</th>
-          <th>Estado</th>
-          <th>Usuario</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let cotizacion of group.cotizaciones; let i = index">
-          <!-- Fila principal de la cotización -->
+    <!-- Encabezado del grupo -->
+    <h5 class="text-left mt-3 mb-2">{{ group.fecha | date: 'dd MMM yyyy'}}</h5>
+    <div class="table-responsive w-100 card">
+      <table class="table table-sm">
+        <thead>
           <tr class="text-center">
-            <th scope="row">{{ i + 1 }}</th>
-            <td>{{ cotizacion.info_cliente?.nombre }}</td>
-            <td class="text-center">{{ cotizacion.iva | currency }}</td>
-            <td class="text-center">{{ cotizacion.subtotal | currency }}</td>
-            <td class="text-center">{{ cotizacion.total | currency }}</td>
-            <td class="text-center">
-              <span [ngStyle]="{ 'color': cotizacion.estado_info?.color }" class="text-center">
-                {{ cotizacion.estado_info?.item }}
-              </span>
-            </td>
-            <td class="text-center td-user text-muted">{{ cotizacion.user }}</td>
-            <td class="text-center d-flex justify-content-center">
-              <button *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0" type="button"
-                class="btn btn-sm btn-light-info" (click)="toggleDetalles(cotizacion.id)">
-                <i class="feather" [class]="isDetalleVisible(cotizacion.id) ? 'icon-eye-off' : 'icon-eye'"></i>
-              </button>
-              <button type="button" class="btn btn-sm btn-light-danger mx-1" (click)="deleteCotizacion(cotizacion.id)">
-                <i class="feather icon-trash"></i>
-              </button>
-
-              <app-cotizacion-form [isEditMode]="true" [cotizacionExistente]="cotizacion"
-                (cotizacionGuardada)="actualizarListaCotizaciones()" />
-              <app-enviar-cotizacion [cotizacionId]="cotizacion.id" />
-              <button type="button" class="btn btn-sm btn-light-warning mx-1" (click)="downloadPDF(cotizacion.id)">
-                <i class="feather icon-download"></i>
-              </button>
-
-            </td>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Cliente</th>
+            <!-- <th>IVA</th>
+          <th>Subtotal</th> -->
+            <th>Fecha de evento</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Usuario</th>
+            <th>Acciones</th>
           </tr>
-          <!-- Fila de detalles de la cotización -->
-          <tr *ngIf="isDetalleVisible(cotizacion.id)">
-            <td colspan="8">
-              <div *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0">
-                <table class="table table-sm table-bordered mb-0">
-                  <thead>
-                    <tr class="text-center">
-                      <th>Cantidad</th>
-                      <th>Producto</th>
-                      <th>Paquete</th>
-                      <th>Costo</th>
-                      <th>Descuento</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let detalle of cotizacion.detalles; let j = index">
-                      <td class="text-center">{{ detalle.cantidad }}</td>
-                      <td class="text-center">{{ detalle.info_producto?.producto }}</td>
-                      <td class="text-center">{{ detalle.info_paquete?.nombre_paquete }}</td>
-                      <ng-container *ngIf="detalle.info_producto; else paquete">
-                        <td class="text-center">{{ detalle.info_producto?.costo*detalle.cantidad }}</td>
-                      </ng-container>
-                      <ng-template #paquete>
-                        <td class="text-center">{{ detalle.info_paquete?.precio_total * detalle.cantidad}}</td>
-                      </ng-template>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let cotizacion of group.cotizaciones; let i = index">
+            <!-- Fila principal de la cotización -->
+            <tr class="text-center">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ cotizacion.nombre_evento }}</td>
+              <td>{{ cotizacion.info_cliente?.nombre }}</td>
+              <!-- <td class="text-center">{{ cotizacion.iva | currency }}</td>
+            <td class="text-center">{{ cotizacion.subtotal | currency }}</td> -->
+              <td class="text-center">{{ cotizacion.fecha_evento | date: 'EEE, d \'de\' MMMM yyyy' }}</td>
+              <td class="text-center">{{ cotizacion.total | currency }}</td>
+              <td class="text-center">
+                <span [ngStyle]="{ 'color': cotizacion.estado_info?.color }" class="text-center">
+                  {{ cotizacion.estado_info?.item }}
+                </span>
+              </td>
+              <td class="text-center td-user text-muted">{{ cotizacion.user }}</td>
+              <td class="text-center d-flex justify-content-center">
+                <button *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0" type="button"
+                  class="btn btn-sm btn-light-info" (click)="toggleDetalles(cotizacion.id)">
+                  <i class="feather" [class]="isDetalleVisible(cotizacion.id) ? 'icon-eye-off' : 'icon-eye'"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-light-danger mx-1"
+                  (click)="deleteCotizacion(cotizacion.id)">
+                  <i class="feather icon-trash"></i>
+                </button>
 
-                      <td class="text-center">{{ detalle.descuento }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div *ngIf="!(cotizacion.detalles && cotizacion.detalles.length > 0)" class="text-center">
-                <em>Esta cotización no tiene detalles.</em>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
-  </div>
-</ng-container>
+                <app-cotizacion-form [isEditMode]="true" [cotizacionExistente]="cotizacion"
+                  (cotizacionGuardada)="actualizarListaCotizaciones()" />
+                <app-enviar-cotizacion [cotizacionId]="cotizacion.id" />
+                <button type="button" class="btn btn-sm btn-light-warning mx-1" (click)="downloadPDF(cotizacion.id)">
+                  <i class="feather icon-download"></i>
+                </button>
+
+              </td>
+            </tr>
+            <!-- Fila de detalles de la cotización -->
+            <tr *ngIf="isDetalleVisible(cotizacion.id)">
+
+              <td colspan="2">
+
+                <!-- Detalles del evento -->
+                <div class="container py-1">
+                  <div class="row justify-content-center">
+                    <div class="col-md-12">
+                      <div class="card shadow">
+                        <!-- <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Detalles del Evento</h5>
+                      </div> -->
+                        <div class="card-body p-0">
+                          <table class="table table-bordered mb-0 table-sm">
+                            <tbody>
+                              <tr>
+                                <th class="table-primary w-25 px-2">Vigencia:</th>
+                                <td class="w-75">{{ cotizacion.fecha_vigencia | date: 'EEE, d \'de\' MMMM yyyy' }}</td>
+                              </tr>
+                              <tr>
+                                <th class="table-primary w-25 px-2">Tipo:</th>
+                                <td class="w-75">{{ cotizacion.evento?.item }}</td>
+                              </tr>
+                              <tr>
+                                <th class="table-primary w-25 px-2">Duración:</th>
+                                <td class="w-75">{{ cotizacion.duracion_evento }} horas</td>
+                              </tr>
+                              <tr>
+                                <th class="table-primary w-25 px-2">Subtotal:</th>
+                                <td class="w-75">{{ cotizacion.subtotal | currency }}</td>
+                              </tr>
+                              <tr>
+                                <th class="table-primary w-25 px-2">IVA:</th>
+                                <td class="w-75">{{ cotizacion.iva | currency }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Fin detalles del evento -->
+              </td>
+
+
+              <td colspan="7">
+                <div *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0">
+                  <table class="table table-sm table-bordered mb-0 shadow mt-1">
+                    <thead>
+                      <tr class="text-center">
+                        <th>Cantidad</th>
+                        <th>Producto</th>
+                        <th>Paquete</th>
+                        <th>Costo</th>
+                        <th>Descuento</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let detalle of cotizacion.detalles; let j = index">
+                        <td class="text-center">{{ detalle.cantidad }}</td>
+                        <td class="text-center">{{ detalle.info_producto?.producto }}</td>
+                        <td class="text-center">{{ detalle.info_paquete?.nombre_paquete }}</td>
+                        <ng-container *ngIf="detalle.info_producto; else paquete">
+                          <td class="text-center">{{ detalle.info_producto?.costo*detalle.cantidad }}</td>
+                        </ng-container>
+                        <ng-template #paquete>
+                          <td class="text-center">{{ detalle.info_paquete?.precio_total * detalle.cantidad}}</td>
+                        </ng-template>
+
+                        <td class="text-center">{{ detalle.descuento }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div *ngIf="!(cotizacion.detalles && cotizacion.detalles.length > 0)" class="text-center">
+                  <em>Esta cotización no tiene detalles.</em>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</app-delay-animations>

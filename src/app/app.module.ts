@@ -26,6 +26,7 @@ import { NavItemComponent } from './theme/layout/admin/navigation/nav-content/na
 import { SharedModule } from './theme/shared/shared.module';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { HttpInterceptorService } from './core/interceptors/http.interceptor';
+import { FechaEspanolPipe } from './core/pipes/fecha-espanol.pipe';
 
 // Custom Mundieventos:
 import { NavBarComponent } from './theme/layout/admin/nav-bar/nav-bar.component';
@@ -51,6 +52,7 @@ import { NavigationComponent } from './theme/layout/admin/navigation/navigation.
     NavItemComponent,
     NavCollapseComponent,
     NavGroupComponent,
+    FechaEspanolPipe
   ],
   imports: [HttpClientModule, FormsModule, BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule],
   providers: [

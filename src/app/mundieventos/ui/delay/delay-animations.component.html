@@ -1,0 +1,21 @@
+@if (!showContent) {
+<div class="loader-container">
+    <div class="loader-spinner">
+        <div class="spinner-circle"></div>
+    </div>
+
+    <p class="loading-text">{{ loadingText }}</p>
+
+    <div class="progress-container">
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar" [style.width]="progress + '%'">
+            </div>
+        </div>
+        <span class="progress-text">{{ progress | number:'1.0-0' }}%</span>
+    </div>
+</div>
+} @else {
+<div [@fadeIn]>
+    <ng-content></ng-content>
+</div>
+}

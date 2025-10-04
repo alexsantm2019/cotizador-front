@@ -12,22 +12,115 @@
   </div>
   <div class="modal-body">
 
-
-    <!-- isEditMode: {{isEditMode}} -->
-
-    <form (ngSubmit)="guardarCotizacion()">
+    <form [formGroup]="cotizacionForm" (ngSubmit)="guardarCotizacion()">
       <div class="row">
 
+        <!-- Nombre de Cotización -->
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="nombreCotizacion" class="form-label">Nombre de Cotización</label>
+            <input type="text" class="form-control" id="nombreCotizacion" formControlName="nombreCotizacion"
+              maxlength="100"
+              [class.is-invalid]="cotizacionForm.get('nombreCotizacion')?.invalid && cotizacionForm.get('nombreCotizacion')?.dirty">
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('nombreCotizacion')?.errors?.['required'] && cotizacionForm.get('nombreCotizacion')?.dirty">
+              El nombre de la cotización es requerido
+            </div>
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('nombreCotizacion')?.errors?.['minlength'] && cotizacionForm.get('nombreCotizacion')?.dirty">
+              El nombre debe tener al menos 3 caracteres
+            </div>
+          </div>
+        </div>
+
         <!-- Cliente -->
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <div class="mb-3">
             <label for="cliente" class="form-label">Cliente</label>
-            <select [(ngModel)]="cliente" name="cliente" id="cliente" class="form-select">
-              <option [ngValue]=0>Seleccione un cliente</option>
+            <select formControlName="cliente" id="cliente" class="form-select"
+              [class.is-invalid]="cotizacionForm.get('cliente')?.invalid && cotizacionForm.get('cliente')?.dirty">
+              <option [value]="0">Seleccione un cliente</option>
               <option *ngFor="let c of clientes" [value]="c.id">
                 {{ c.nombre }}
               </option>
             </select>
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('cliente')?.errors?.['required'] && cotizacionForm.get('cliente')?.dirty">
+              El cliente es requerido
+            </div>
+          </div>
+        </div>
+
+        <!-- Tipo de Evento -->
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="tipoEvento" class="form-label">Tipo de Evento</label>
+            <select class="form-select" id="tipoEvento" formControlName="tipoEvento">
+              <option value="" disabled>- Seleccione -</option>
+              <option *ngFor="let tipo of tiposEvento" [value]="tipo.codigo">
+                {{ tipo.item}}
+              </option>
+            </select>
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('tipoEvento')?.errors?.['required'] && cotizacionForm.get('tipoEvento')?.dirty">
+              El tipo de evento es requerido
+            </div>
+          </div>
+        </div>
+
+        <!-- Fecha del Evento -->
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="fechaEvento" class="form-label">Fecha del Evento</label>
+            <input type="date" class="form-control" id="fechaEvento" formControlName="fechaEvento"
+              [min]="getFechaMinima()"
+              [class.is-invalid]="(cotizacionForm.get('fechaEvento')?.invalid && cotizacionForm.get('fechaEvento')?.dirty) || cotizacionForm.errors?.['fechaEventoAnterior']">
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('fechaEvento')?.errors?.['required'] && cotizacionForm.get('fechaEvento')?.dirty">
+              La fecha del evento es requerida
+            </div>
+            <div class="invalid-feedback" *ngIf="cotizacionForm.get('fechaEvento')?.errors?.['fechaMinima']">
+              La fecha del evento no puede ser anterior a la fecha actual
+            </div>
+            <div class="invalid-feedback" *ngIf="cotizacionForm.errors?.['fechaEventoAnterior']">
+              La fecha del evento no puede ser anterior a la fecha de validez
+            </div>
+          </div>
+        </div>
+
+        <!-- Fecha de Validez -->
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="fechaValidez" class="form-label">Fecha de Validez</label>
+            <input type="date" class="form-control" id="fechaValidez" formControlName="fechaValidez"
+              [min]="getFechaMinima()"
+              [class.is-invalid]="(cotizacionForm.get('fechaValidez')?.invalid && cotizacionForm.get('fechaValidez')?.dirty) || cotizacionForm.errors?.['fechaEventoAnterior']">
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('fechaValidez')?.errors?.['required'] && cotizacionForm.get('fechaValidez')?.dirty">
+              La fecha de validez es requerida
+            </div>
+            <div class="invalid-feedback" *ngIf="cotizacionForm.get('fechaValidez')?.errors?.['fechaMinima']">
+              La fecha de validez no puede ser anterior a la fecha actual
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Duración del Evento -->
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <label for="duracionEvento" class="form-label">Duración del Evento (horas)</label>
+            <input type="number" class="form-control" id="duracionEvento" formControlName="duracionEvento" min="1"
+              [class.is-invalid]="cotizacionForm.get('duracionEvento')?.invalid && cotizacionForm.get('duracionEvento')?.dirty">
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('duracionEvento')?.errors?.['required'] && cotizacionForm.get('duracionEvento')?.dirty">
+              La duración del evento es requerida
+            </div>
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('duracionEvento')?.errors?.['min'] && cotizacionForm.get('duracionEvento')?.dirty">
+              La duración debe ser al menos 1 hora
+            </div>
           </div>
         </div>
 
@@ -35,8 +128,7 @@
         <div class="col-lg-6">
           <div class="mb-3">
             <label for="producto" class="form-label">Producto</label>
-            <select [(ngModel)]="producto" name="producto" id="producto" class="form-select"
-              (change)="agregarProducto()">
+            <select formControlName="producto" id="producto" class="form-select" (change)="agregarProducto()">
               <option [ngValue]="null">Seleccione un producto</option>
               <option *ngFor="let p of productos" [ngValue]="p" [disabled]="p.tipo_costo === 1 && p.cantidad <= 5">
                 {{ p.producto }}
@@ -49,7 +141,7 @@
         <div class="col-lg-6">
           <div class="mb-3">
             <label for="paquete" class="form-label">Paquete</label>
-            <select [(ngModel)]="paquete" name="paquete" id="paquete" class="form-select" (change)="agregarPaquete()">
+            <select formControlName="paquete" id="paquete" class="form-select" (change)="agregarPaquete()">
               <option [ngValue]="null">Seleccione un paquete</option>
               <option *ngFor="let pqt of paquetes" [ngValue]="pqt">
                 {{ pqt.nombre_paquete }}
@@ -79,7 +171,8 @@
                     <td class="align-middle w-50">{{ item.nombre }}</td>
                     <td class="align-middle w-25">
                       <input *ngIf="!item.disable" type="number" class="form-control" [(ngModel)]="item.cantidad"
-                        (input)="actualizarTotal(i)" name="cantidad_{{i}}" min="1" />
+                        (input)="actualizarTotal(i)" name="cantidad_{{i}}" min="1"
+                        [ngModelOptions]="{standalone: true}" />
                     </td>
                     <td class="align-middle">{{ item.precio_unitario | currency }}</td>
                     <td class="align-middle w-25">
@@ -105,26 +198,35 @@
             <label class="form-label">IVA</label><br>
             <div class="btn-group" role="group" aria-label="IVA">
               <ng-container *ngFor="let option of ivaOptions">
-                <input type="radio" class="btn-check" name="iva" [(ngModel)]="iva" [id]="'btnradio' + option.value"
+                <input type="radio" class="btn-check" formControlName="iva" [id]="'btnradio' + option.value"
                   [value]="option.value" autocomplete="off">
                 <label class="btn btn-outline-primary" [for]="'btnradio' + option.value">
                   {{ option.label }}
                 </label>
               </ng-container>
             </div>
-
+            <div class="invalid-feedback d-block"
+              *ngIf="cotizacionForm.get('iva')?.errors?.['required'] && cotizacionForm.get('iva')?.dirty">
+              El IVA es requerido
+            </div>
           </div>
         </div>
+
         <div class="col-lg-6">
           <!-- Estados de cotizacion -->
           <div class="mb-3">
             <label for="estado" class="form-label">Estado</label>
-            <select [(ngModel)]="estado" name="estado" id="estado" class="form-select">
-              <option [ngValue]="null">- Seleccione un estado - </option>
-              <option *ngFor="let estado of estadosCotizacion" [ngValue]="estado.codigo">
+            <select formControlName="estado" id="estado" class="form-select"
+              [class.is-invalid]="cotizacionForm.get('estado')?.invalid && cotizacionForm.get('estado')?.dirty">
+              <option [value]="null">- Seleccione un estado - </option>
+              <option *ngFor="let estado of estadosCotizacion" [value]="estado.codigo">
                 {{ estado.item }}
               </option>
             </select>
+            <div class="invalid-feedback"
+              *ngIf="cotizacionForm.get('estado')?.errors?.['required'] && cotizacionForm.get('estado')?.dirty">
+              El estado es requerido
+            </div>
           </div>
         </div>
 
@@ -132,8 +234,9 @@
           <hr>
           <div class="col-lg-12 d-flex justify-content-end">
             <button type="button" class="btn btn-secondary mx-1" (click)="closeModal()">Cerrar</button>
-            <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Guardar' }}
-              Cotización</button>
+            <button type="submit" class="btn btn-success" [disabled]="cotizacionForm.invalid">
+              {{ isEditMode ? 'Actualizar' : 'Guardar' }} Cotización
+            </button>
           </div>
         </div>
 

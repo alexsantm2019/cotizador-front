@@ -4,15 +4,22 @@ export interface CotizacionInterface {
     id: number;
     fecha_creacion: string;
     clientes_id: number;
-    iva: number;    
+    iva: number;
     tipo_descuento: number;
     descuento: number;
     subtotal: number;
     total: number;
     estado: number;
-    detalles?: CotizacionDetalleInterface[];    
-    info_cliente?: ClientesInterface;  
-    cliente: number;    
+    detalles?: CotizacionDetalleInterface[];
+    info_cliente?: ClientesInterface;
+    cliente: number;
     user: string;
-    estado_info?: any;   
- }
+    estado_info?: any;
+
+    // Nuevos campos
+    fecha_vigencia?: string;
+    fecha_evento?: string;
+    nombre_evento?: string;
+    tipo_evento?: number;
+    duracion_evento?: number;
+}

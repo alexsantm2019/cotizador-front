@@ -25,7 +25,7 @@ import { DetalleInterface } from '../../../core/models/detalles.models';
 @Component({
   selector: 'app-cotizacion-form',
   standalone: true,
-  imports: [SharedModule, FormsModule, RouterModule, CommonModule],
+  imports: [SharedModule, FormsModule, RouterModule, CommonModule, ReactiveFormsModule],
   templateUrl: './cotizacion-form.component.html',
   styleUrls: ['./cotizacion-form.component.scss']
 })
@@ -44,27 +44,34 @@ export class CotizadorFormComponent implements OnInit {
   private cotizacionesService = inject(CotizacionesService);
   private catalogosService = inject(CatalogosService);
 
-  cliente: number = 0;
-  producto: ProductosInterface | null = null;
-  paquete: PaqueteInterface | null = null;
-  iva: number = 0;
-  estado: number = 1;
+  // Eliminamos las variables individuales y usamos el formulario reactivo
+  cotizacionForm!: FormGroup;
 
   clientes: ClientesInterface[] = [];
   paquetes: PaqueteInterface[] = [];
   productos: ProductosInterface[] = [];
   itemsCotizacion: any[] = [];
+  hoy = new Date().toISOString().split('T')[0];
+
   ivaOptions = [
     { value: 0, label: '0%' },
     { value: 15, label: '15%' }
   ];
-  estadosCotizacion: any;
 
-  paqueteForm!: FormGroup;
+  tipoEventoOptions = [
+    { value: 1, label: 'Boda' },
+    { value: 2, label: 'Cumpleaños' },
+    { value: 3, label: 'Empresarial' }
+  ];
+
+  estadosCotizacion: any;
+  tiposEvento: any;
   private notyf = new Notyf();
 
   constructor(
+    private fb: FormBuilder,
     private cdr: ChangeDetectorRef) {
+    this.inicializarFormulario();
   }
 
   ngOnInit(): void {
@@ -72,12 +79,52 @@ export class CotizadorFormComponent implements OnInit {
     this.getProductos();
     this.getPaquetes();
     this.getEstadosCotizacion();
+    this.getTipoEventos();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['cotizacionExistente'] && changes['cotizacionExistente'].currentValue) {
       this.cargarCotizacion(this.cotizacionExistente);
     }
+  }
+
+  inicializarFormulario(): void {
+    this.cotizacionForm = this.fb.group({
+      cliente: [0, Validators.required],
+      producto: [null],
+      paquete: [null],
+      iva: [0, Validators.required],
+      estado: [1, Validators.required],
+      // Nuevos campos
+      // fechaValidez: ['', Validators.required],
+      // fechaEvento: ['', Validators.required],
+      fechaValidez: ['', [Validators.required, this.fechaMinimaValidator(this.hoy)]],
+      fechaEvento: ['', [Validators.required, this.fechaMinimaValidator(this.hoy)]],
+      nombreCotizacion: ['', [Validators.required, Validators.minLength(3)]],
+      tipoEvento: ['', Validators.required],
+      duracionEvento: ['', [Validators.required, Validators.min(1)]]
+    });
+  }
+
+  fechaMinimaValidator(fechaMinima: string) {
+    return (control: any) => {
+      if (!control.value) {
+        return null; // No validar si está vacío (ya hay validación required)
+      }
+
+      const fechaSeleccionada = new Date(control.value);
+      const fechaMin = new Date(fechaMinima);
+
+      // Resetear horas para comparar solo las fechas
+      fechaSeleccionada.setHours(0, 0, 0, 0);
+      fechaMin.setHours(0, 0, 0, 0);
+
+      return fechaSeleccionada < fechaMin ? { fechaMinima: { value: control.value } } : null;
+    };
+  }
+
+  getFechaMinima(): string {
+    return new Date().toISOString().split('T')[0];
   }
 
   getEstadosCotizacion(): void {
@@ -90,7 +137,16 @@ export class CotizadorFormComponent implements OnInit {
       }
     });
   }
-
+  getTipoEventos(): void {
+    this.catalogosService.getCatalogoByGrupo(CATALOGOS.GRUPO_TIPO_EVENTOS).subscribe({
+      next: (data) => {
+        this.tiposEvento = data;
+      },
+      error: (error) => {
+        console.error('Error al obtener tipo de costos:', error);
+      }
+    });
+  }
   cargarCotizacion(cotizacion: any): void {
     if (cotizacion) {
       // Limpia itemsCotizacion para evitar datos duplicados
@@ -98,6 +154,58 @@ export class CotizadorFormComponent implements OnInit {
 
       // Reutiliza poblarItemsCotizacion para construir los items
       this.poblarItemsCotizacion(cotizacion);
+
+      // Actualizar el formulario con los datos existentes usando los nombres correctos de la BD
+      this.cotizacionForm.patchValue({
+        cliente: cotizacion.cliente,
+        iva: parseFloat(cotizacion.iva),
+        estado: parseFloat(cotizacion.estado),
+        // Mapeo correcto de los campos de la base de datos
+        fechaValidez: this.parsearFecha(cotizacion.fecha_vigencia),
+        fechaEvento: this.parsearFecha(cotizacion.fecha_evento),
+        nombreCotizacion: cotizacion.nombre_evento || '',
+        tipoEvento: cotizacion.tipo_evento || '',
+        duracionEvento: cotizacion.duracion_evento || ''
+      });
+    }
+  }
+
+  // Método para parsear fechas (mantén el que mejor funcione con tu formato de fechas)
+  parsearFecha(fecha: any): string {
+    if (!fecha) return '';
+
+    try {
+      let fechaObj: Date;
+
+      if (fecha instanceof Date) {
+        fechaObj = fecha;
+      } else if (typeof fecha === 'string') {
+        // Si ya viene en formato YYYY-MM-DD, usarlo directamente
+        if (fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          return fecha;
+        }
+        // Intentar parsear otros formatos
+        fechaObj = new Date(fecha);
+      } else {
+        console.warn('Formato de fecha no reconocido:', fecha);
+        return '';
+      }
+
+      // Verificar si la fecha es válida
+      if (isNaN(fechaObj.getTime())) {
+        console.warn('Fecha inválida:', fecha);
+        return '';
+      }
+
+      // Formatear a YYYY-MM-DD para input type="date"
+      const año = fechaObj.getFullYear();
+      const mes = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
+      const dia = fechaObj.getDate().toString().padStart(2, '0');
+
+      return `${año}-${mes}-${dia}`;
+    } catch (error) {
+      console.error('Error parseando fecha:', fecha, error);
+      return '';
     }
   }
 
@@ -106,9 +214,7 @@ export class CotizadorFormComponent implements OnInit {
       console.warn('La cotización no tiene detalles o no está correctamente estructurada.');
       return;
     }
-    this.cliente = cotizacion.cliente;  //OK
-    this.iva = parseFloat(cotizacion.iva);  //OK
-    this.estado = parseFloat(cotizacion.estado);  //OK
+
     cotizacion.detalles.forEach((detalle: DetalleInterface) => {
       const tipoItem = detalle.tipo_item;
 
@@ -123,6 +229,7 @@ export class CotizadorFormComponent implements OnInit {
           total: (detalle.cantidad || 1) * (detalle.info_producto?.costo || 0),
           tipo: tipoItem,
           disable: false, // Productos dentro de paquetes son deshabilitados
+
         });
         this.actualizarTotal(this.itemsCotizacion.length - 1);
       }
@@ -143,6 +250,7 @@ export class CotizadorFormComponent implements OnInit {
       }
     });
   }
+
   getClientes(): void {
     this.clientesService.getClientes().subscribe({
       next: (data) => {
@@ -213,30 +321,34 @@ export class CotizadorFormComponent implements OnInit {
   showSuccess(msg: any) {
     this.notyf.success(msg);
   }
+
   showError(msg: any) {
     this.notyf.error(msg);
   }
+
   agregarProducto(): void {
-    if (this.producto) {
+    const producto = this.cotizacionForm.get('producto')?.value;
+    if (producto) {
       this.itemsCotizacion.push({
-        id: this.producto.id,
-        nombre: this.producto.producto,
+        id: producto.id,
+        nombre: producto.producto,
         cantidad: 1,
         descuento: 0,
-        precio_unitario: this.producto.costo,
-        total: this.producto.costo,
+        precio_unitario: producto.costo,
+        total: producto.costo,
         tipo: 1,
         disable: false
       });
-      this.producto = null; // Resetea el select
+      this.cotizacionForm.get('producto')?.setValue(null); // Resetea el select
     }
   }
 
   agregarPaquete(): void {
-    if (this.paquete) {
+    const paquete = this.cotizacionForm.get('paquete')?.value;
+    if (paquete) {
       this.itemsCotizacion.push({
-        id: this.paquete.id,
-        nombre: this.paquete.nombre_paquete,
+        id: paquete.id,
+        nombre: paquete.nombre_paquete,
         cantidad: 1,
         descuento: 0,
         precio_unitario: null,
@@ -245,7 +357,7 @@ export class CotizadorFormComponent implements OnInit {
         disable: true
       });
 
-      this.paquetesService.getPaqueteById(this.paquete.id).subscribe(paqueteData => {
+      this.paquetesService.getPaqueteById(paquete.id).subscribe(paqueteData => {
         const paquete = paqueteData[0]; // El paquete viene dentro de un array
         // Comprobamos si detalles existe y es un array
         if (paquete && Array.isArray(paquete.detalles)) {
@@ -270,18 +382,31 @@ export class CotizadorFormComponent implements OnInit {
           console.warn('El paquete no tiene detalles o detalles es undefined.');
         }
       });
-      this.paquete = null; // Resetea el select
+      this.cotizacionForm.get('paquete')?.setValue(null); // Resetea el select
     }
   }
 
   guardarCotizacion() {
+    if (this.cotizacionForm.invalid) {
+      this.marcarCamposComoSucios();
+      return;
+    }
+
+    const formValue = this.cotizacionForm.value;
+
     const cotizacion = {
       id: this.cotizacionExistente?.id, // Añade el ID si existe
-      cliente: Number(this.cliente),
-      iva: this.iva,
-      estado: this.estado,
+      cliente: Number(formValue.cliente),
+      iva: formValue.iva,
+      estado: formValue.estado,
       subtotal: this.calcularSubtotal(),
       total: this.calcularTotal(),
+      // Nuevos campos
+      fecha_vigencia: formValue.fechaValidez,
+      fecha_evento: formValue.fechaEvento,
+      nombre_evento: formValue.nombreCotizacion,
+      tipo_evento: formValue.tipoEvento,
+      duracion_evento: formValue.duracionEvento,
       detalles: this.itemsCotizacion.map(item => ({
         cantidad: item.cantidad,
         paquete: item.tipo === 2 ? item.id : null,
@@ -320,6 +445,16 @@ export class CotizadorFormComponent implements OnInit {
     this.limpiarFormulario();
     this.closeModal();
   }
+
+  marcarCamposComoSucios(): void {
+    Object.keys(this.cotizacionForm.controls).forEach(key => {
+      const control = this.cotizacionForm.get(key);
+      if (control?.invalid) {
+        control.markAsDirty();
+      }
+    });
+  }
+
   calcularSubtotal(): number {
     return this.itemsCotizacion.reduce((sum, item) => {
       const itemTotal = parseFloat(item.total);
@@ -329,15 +464,23 @@ export class CotizadorFormComponent implements OnInit {
 
   calcularTotal(): number {
     const subtotal = this.calcularSubtotal();
-    const total = subtotal + (subtotal * (this.iva / 100));
+    const total = subtotal + (subtotal * (this.cotizacionForm.value.iva / 100));
     return parseFloat(total.toFixed(2));  // Limita a 2 decimales
   }
+
   limpiarFormulario() {
-    this.cliente = 0;
-    this.estado = 1;
-    this.producto = null;
-    this.paquete = null;
-    this.iva = 0;
+    this.cotizacionForm.reset({
+      cliente: 0,
+      estado: 1,
+      producto: null,
+      paquete: null,
+      iva: 0,
+      fechaValidez: '',
+      fechaEvento: '',
+      nombreCotizacion: '',
+      tipoEvento: '',
+      duracionEvento: ''
+    });
     this.itemsCotizacion = [];
     this.cdr.detectChanges();
   }
@@ -345,11 +488,10 @@ export class CotizadorFormComponent implements OnInit {
   openModal(content: TemplateRef<any>) {
     this.modalRef = this.modalService.open(content, { size: 'lg', ariaLabelledBy: 'modal-basic-title' });
   }
+
   closeModal() {
     if (this.modalRef) {
       this.modalRef.dismiss(); // Cancela el modal con un estado de rechazo
     }
   }
-
-
 }

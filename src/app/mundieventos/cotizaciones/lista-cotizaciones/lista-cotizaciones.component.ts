@@ -10,6 +10,7 @@ import { NgbModal, NgbModalRef, NgbModalModule } from '@ng-bootstrap/ng-bootstra
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { Notyf } from 'notyf';
 
+
 // Servicio:
 import { CotizadorFormComponent } from '../cotizacion-form/cotizacion-form.component';
 import { EnviarCotizacionComponent } from '../_enviar-cotizacion/enviar-cotizacion.component';
@@ -18,11 +19,12 @@ import { CotizacionesService } from '../../../core/services/cotizador/cotizador.
 import { CotizacionInterface } from '../../../core/models/cotizaciones.model';
 import { ClientesService } from '../../../core/services/clientes/clientes.service'
 import { ClientesInterface } from '../../../core/models/clientes.models';
+import { DelayAnimationsComponent } from '../../ui/delay/delay-animations.component';
 
 @Component({
   selector: 'app-lista-cotizaciones',
   standalone: true,
-  imports: [SharedModule, NgbModalModule, CotizadorFormComponent, EnviarCotizacionComponent],
+  imports: [SharedModule, NgbModalModule, CotizadorFormComponent, EnviarCotizacionComponent, DelayAnimationsComponent],
   templateUrl: './lista-cotizaciones.component.html',
   styleUrls: ['./lista-cotizaciones.component.scss']
 })
