@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-
+import { HttpResponse } from '@angular/common/http';
 import { CotizacionInterface } from '../../models/cotizaciones.model';
 
 @Injectable({
@@ -46,9 +46,10 @@ export class CotizacionesService {
     return this.http.post(`${this.apiUrl}/enviar_correo/${id}`, {});
   }
 
-  downloadPDF(id: number): Observable<any> {
+  downloadPDF(id: number): Observable<HttpResponse<Blob>> {
     return this.http.post(`${this.apiUrl}/download_pdf/${id}`, {}, {
-      responseType: 'blob'
+      responseType: 'blob',
+      observe: 'response'
     });
   }
 

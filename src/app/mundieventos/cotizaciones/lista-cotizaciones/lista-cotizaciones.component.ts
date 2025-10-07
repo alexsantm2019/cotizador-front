@@ -206,33 +206,71 @@ export class ListaCotizacionesComponent implements OnInit {
 
   downloadPDF(id: number): void {
     this.cotizacionService.downloadPDF(id).subscribe({
-      next: (data: Blob) => {
-        const fileURL = URL.createObjectURL(data);
+      next: (response) => {
+        const blob = response.body as Blob;
+        const fileURL = URL.createObjectURL(blob);
+
+        // Leer nombre desde el encabezado Content-Disposition
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = 'cotizacion.pdf'; // nombre por defecto
+
+        if (contentDisposition) {
+          const matches = /filename="?([^"]+)"?/i.exec(contentDisposition);
+          if (matches && matches[1]) {
+            fileName = matches[1];
+          }
+        } else {
+          console.log("No se lee content-disposition");
+        }
+
+        // Crear el enlace para descargar
         const a = document.createElement('a');
-        const now = new Date();
-
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // Mes empieza en 0
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const fecha = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-
         a.href = fileURL;
-        a.download = `cotizacion_${fecha}.pdf`;
-        a.target = '_blank';
-        document.body.appendChild(a);
+        a.download = fileName;
         a.click();
-        document.body.removeChild(a);
 
-        this.showSuccess('Cotización abierta y descargada exitosamente');
+        // Liberar memoria
+        URL.revokeObjectURL(fileURL);
+
+        this.showSuccess(`Cotización descargada correctamente como ${fileName}`);
       },
       error: (error) => {
-        console.error('Error en la descarga del PDF:', error);
-      },
+        console.error('❌ Error al descargar el PDF:', error);
+      }
     });
   }
+
+
+
+  // downloadPDF(id: number): void {
+  //   this.cotizacionService.downloadPDF(id).subscribe({
+  //     next: (data: Blob) => {
+  //       const fileURL = URL.createObjectURL(data);
+  //       const a = document.createElement('a');
+  //       const now = new Date();
+
+  //       const year = now.getFullYear();
+  //       const month = String(now.getMonth() + 1).padStart(2, '0'); // Mes empieza en 0
+  //       const day = String(now.getDate()).padStart(2, '0');
+  //       const hours = String(now.getHours()).padStart(2, '0');
+  //       const minutes = String(now.getMinutes()).padStart(2, '0');
+  //       const seconds = String(now.getSeconds()).padStart(2, '0');
+  //       const fecha = `${year}${month}${day}_${hours}${minutes}${seconds}`;
+
+  //       a.href = fileURL;
+  //       a.download = `cotizacion_${fecha}.pdf`;
+  //       a.target = '_blank';
+  //       document.body.appendChild(a);
+  //       a.click();
+  //       document.body.removeChild(a);
+
+  //       this.showSuccess('Cotización abierta y descargada exitosamente');
+  //     },
+  //     error: (error) => {
+  //       console.error('Error en la descarga del PDF:', error);
+  //     },
+  //   });
+  // }
 
   showSuccess(msg: any) {
     this.notyf.success(msg);
