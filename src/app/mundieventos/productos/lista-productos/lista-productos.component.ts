@@ -32,6 +32,7 @@ export class ListaProductosComponent implements OnInit {
   pageSize = 20;
   isEditMode: boolean = false;
   productoSeleccionado: ProductosInterface | null = null;
+  mostrarDescripcion: boolean = false;
 
   // Filtro:
   searchTerm = signal('');

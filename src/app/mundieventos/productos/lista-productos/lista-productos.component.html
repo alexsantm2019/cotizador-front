@@ -3,6 +3,13 @@
     <div class="d-flex justify-content-between">
       <!-- Buscador -->
       <app-producto-search (searchChange)="onSearch($event)"></app-producto-search>
+      <!-- SWITCH PARA MOSTRAR/OCULTAR DESCRIPCIÓN -->
+      <div class="form-check form-switch me-3">
+        <input class="form-check-input" type="checkbox" id="switchDescripcion" [(ngModel)]="mostrarDescripcion">
+        <label class="form-check-label" for="switchDescripcion">
+          Mostrar descripción
+        </label>
+      </div>
       <!-- Nuevo producto -->
       <app-nuevo-producto [producto]="productoSeleccionado" [isEditMode]="isEditMode"
         (productoGuardado)="onProductoGuardado($event)">
@@ -14,7 +21,7 @@
           <tr class="text-center">
             <!-- <th>#</th> -->
             <th>Producto</th>
-            <th>Descripción</th>
+            <th *ngIf="mostrarDescripcion">Descripción</th>
             <th>Cantidad</th>
             <th>Tipo de costo</th>
             <th>Costo</th>
@@ -29,7 +36,7 @@
           <tr *ngFor="let producto of getPagedProducts(); let i = index">
             <!-- <th scope="row">{{ i + 1 }}</th> -->
             <td>{{ producto.producto }}</td>
-            <td style="width: 50px;">{{ producto.descripcion }}</td>
+            <td *ngIf="mostrarDescripcion" style="width: 150px;">{{ producto.descripcion }}</td>
             <td class="text-center">{{ producto.cantidad }}</td>
             <td class="text-center">
               <span class="text-center">
