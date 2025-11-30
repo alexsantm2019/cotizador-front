@@ -42,7 +42,7 @@ export class ListaCotizacionesComponent implements OnInit {
   clientes: ClientesInterface[] = [];
   groupedCotizaciones: { fecha: string; cotizaciones: any[] }[] = [];
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 20;
   itemsPerPage: number = 15;
   isEditMode: boolean = false;
   paqueteSeleccionado: PaqueteInterface | null = null;

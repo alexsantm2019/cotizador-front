@@ -29,7 +29,7 @@ export class ListaClientesComponent implements OnInit {
   // clientes: ClientesInterface[] = [];
   clientes = signal<ClientesInterface[]>([]);
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 20;
   isEditMode: boolean = false;
   clienteSeleccionado: ClientesInterface | null = null;
 

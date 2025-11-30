@@ -51,6 +51,10 @@ const routes: Routes = [
       },
       // =========================== Rutas de la aplicación ==============================
       {
+        path: 'catalogos',
+        loadComponent: () => import('./mundieventos/catalogos/catalogos.component').then(m => m.CatalogosComponent)
+      },
+      {
         path: 'inventario',
         loadComponent: () => import('./mundieventos/inventario/inventario.component').then(m => m.InventarioComponent)
       },

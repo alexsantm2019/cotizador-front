@@ -13,7 +13,7 @@
       <table class="table table-sm table-hover">
         <thead>
           <tr class="text-center">
-            <th>#</th>
+            <!-- <th>#</th> -->
             <th>Nombre</th>
             <th>Identificación</th>
             <th>Correo</th>
@@ -24,11 +24,11 @@
         </thead>
         <tbody>
           <tr *ngFor="let cliente of getPagedClientes(); let i = index">
-            <th scope="row">{{ i + 1 }}</th>
+            <!-- <th scope="row">{{ i + 1 }}</th> -->
             <td>{{ cliente.nombre }}</td>
             <td>{{ cliente.identificacion }}</td>
             <td>{{ cliente.correo }}</td>
-            <td>{{ cliente.telefono }}</td>
+            <td class="text-center align-middle">{{ cliente.telefono }}</td>
             <td>{{ cliente.direccion }}</td>
             <td class="text-center align-middle">
               <!-- Edicion de producto -->

@@ -27,7 +27,7 @@ export class InventarioComponent implements OnInit {
   // productosInventario: ProductosInterface[] = [];
   productosInventario = signal<ProductosInterface[]>([]);
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 20;
   minimoProductosInventario = 5;
 
   // Filtro:

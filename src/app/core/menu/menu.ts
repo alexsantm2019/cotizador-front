@@ -14,6 +14,13 @@ export const MenuItems: NavigationItemInterface[] = [
                 icon: 'feather icon-box',
             },
             {
+                id: 'catalogos',
+                title: 'Catálogos',
+                type: 'item',
+                url: '/catalogos',
+                icon: 'feather icon-box',
+            },
+            {
                 id: 'inventario',
                 title: 'Inventario',
                 type: 'item',
@@ -89,6 +96,7 @@ export const MenuItems: NavigationItemInterface[] = [
 
                 ]
             },
+
 
         ]
     },

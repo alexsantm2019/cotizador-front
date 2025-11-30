@@ -32,7 +32,7 @@
       <table class="table table-sm">
         <thead>
           <tr class="text-center">
-            <th>#</th>
+            <!-- <th>#</th> -->
             <th>Nombre</th>
             <th>Cliente</th>
             <!-- <th>IVA</th>
@@ -47,10 +47,10 @@
         <tbody>
           <ng-container *ngFor="let cotizacion of group.cotizaciones; let i = index">
             <!-- Fila principal de la cotización -->
-            <tr class="text-center">
-              <th scope="row">{{ i + 1 }}</th>
-              <td>{{ cotizacion.nombre_evento }}</td>
-              <td>{{ cotizacion.info_cliente?.nombre }}</td>
+            <tr>
+              <!-- <th scope="row">{{ i + 1 }}</th> -->
+              <td class="text-left ml-1">{{ cotizacion.nombre_evento }}</td>
+              <td class="text-center">{{ cotizacion.info_cliente?.nombre }}</td>
               <!-- <td class="text-center">{{ cotizacion.iva | currency }}</td>
             <td class="text-center">{{ cotizacion.subtotal | currency }}</td> -->
               <td class="text-center">{{ cotizacion.fecha_evento | date: 'EEE, d \'de\' MMMM yyyy' }}</td>

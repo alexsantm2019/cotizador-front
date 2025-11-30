@@ -12,9 +12,10 @@
       <table class="table table-sm table-hover">
         <thead>
           <tr class="text-center">
-            <th>#</th>
+            <!-- <th>#</th> -->
             <th>Producto</th>
             <th>Descripción</th>
+            <th>Cantidad</th>
             <th>Tipo de costo</th>
             <th>Costo</th>
             <th>Ubicación</th>
@@ -26,15 +27,17 @@
         </thead>
         <tbody>
           <tr *ngFor="let producto of getPagedProducts(); let i = index">
-            <th scope="row">{{ i + 1 }}</th>
+            <!-- <th scope="row">{{ i + 1 }}</th> -->
             <td>{{ producto.producto }}</td>
-            <td>{{ producto.descripcion }}</td>
+            <td style="width: 50px;">{{ producto.descripcion }}</td>
+            <td class="text-center">{{ producto.cantidad }}</td>
             <td class="text-center">
               <span class="text-center">
                 {{ producto.tipo_costo_info?.item }}
               </span>
             </td>
-            <td>{{ producto.costo | currency }}</td>
+
+            <td class="text-center">{{ producto.costo | currency }}</td>
             <td>{{ producto.ubicacion }}</td>
             <td class="text-center">
               <span [ngStyle]="{ 'color': producto.categoria_info?.color }" class="text-center">

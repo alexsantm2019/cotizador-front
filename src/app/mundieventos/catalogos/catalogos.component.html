@@ -1,0 +1,118 @@
+<div class="row">
+
+    <div class="col-lg-3">
+        <div class="mt-3" *ngIf="catalogos.length > 0">
+
+            <h3>Nuevo catálogo</h3>
+
+            <form [formGroup]="nuevoForm" novalidate>
+
+                <label>Grupo (*)</label>
+                <input type="number" class="form-control" formControlName="grupo" placeholder="Ingresa un grupo">
+                <small *ngIf="nuevoForm.get('grupo')?.touched && nuevoForm.get('grupo')?.invalid" class="text-danger">El
+                    grupo es obligatorio.</small><br>
+
+                <label>Código (*)</label>
+                <input type="number" class="form-control" formControlName="codigo" placeholder="Ingresa un código">
+                <small *ngIf="nuevoForm.get('codigo')?.touched && nuevoForm.get('codigo')?.invalid"
+                    class="text-danger">El
+                    código es obligatorio.</small><br>
+
+                <label>Item (*)</label>
+                <input type="text" class="form-control" formControlName="item" placeholder="Ingresa un item">
+                <small *ngIf="nuevoForm.get('item')?.touched && nuevoForm.get('item')?.invalid" class="text-danger">El
+                    item
+                    es obligatorio.</small><br>
+
+                <label>Detalle (*)</label>
+                <input type="text" class="form-control" formControlName="detalle" placeholder="Ingresa un detalle">
+                <small *ngIf="nuevoForm.get('detalle')?.touched && nuevoForm.get('detalle')?.invalid"
+                    class="text-danger">El
+                    detalle es obligatorio.</small><br>
+
+                <label>Color</label>
+                <input type="text" class="form-control" formControlName="color" placeholder="Ingresa un color">
+
+                <button class="btn btn-success mt-3" type="button" (click)="guardarCatalogo()">
+                    Guardar
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+    <div class="col-lg-9">
+        <table class="table table-sm mt-3" *ngIf="catalogos.length > 0">
+            <thead>
+                <tr class="text-center">
+                    <!-- <th>ID</th> -->
+                    <th>Grupo</th>
+                    <th>Código</th>
+                    <th>Item</th>
+                    <th>Detalle</th>
+                    <th>Color</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let catalogo of catalogos" class="text-center">
+
+                    <td class="text-center align-middle h4">{{ catalogo.grupo }}</td>
+
+                    <td class="text-center align-middle w-25" style="width: 125px !important;">
+                        <input type="number" class="form-control" min="0" [value]="catalogo.codigo"
+                            (input)="onInputChange(catalogo, 'codigo', $any($event.target).valueAsNumber)">
+                    </td>
+
+                    <td class="text-center align-middle">
+                        <input type="text" class="form-control" [value]="catalogo.item"
+                            (input)="onInputChange(catalogo, 'item', $any($event.target).value)">
+                    </td>
+
+                    <td class="text-center align-middle">
+                        <input type="text" class="form-control" [value]="catalogo.detalle"
+                            (input)="onInputChange(catalogo, 'detalle', $any($event.target).value)">
+                    </td>
+
+                    <td class="text-center align-middle">
+                        <input type="text" class="form-control" [value]="catalogo.color"
+                            (input)="onInputChange(catalogo, 'color', $any($event.target).value)">
+                    </td>
+
+                    <td class="text-center align-middle">
+
+                        <!-- Botón para actualizar la fila -->
+                        <button class="btn btn-sm btn-light-success" (click)="updateCatalogo(catalogo)">
+                            <i class="feather icon-check"></i>
+                        </button>
+
+                        <button class="btn btn-sm btn-light-danger" (click)="eliminarCatalogo(catalogo.id)">
+                            <i class="feather icon-trash"></i>
+                        </button>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<!-- <h5 *ngIf="catalogos.length > 0">{{ editando ? 'Editar catálogo' : 'Nuevo catálogo' }}</h5>
+<div class="mt-3 d-flex" *ngIf="catalogos.length > 0">
+
+    <input type="number" class="form-control" min="0" placeholder="Grupo" [value]="nuevoCatalogo.grupo || ''"
+        (input)="onChangeNuevo('grupo', $any($event.target).valueAsNumber)">
+    <input type="number" class="form-control" min="0" placeholder="Código" [value]="nuevoCatalogo.codigo || ''"
+        (input)="onChangeNuevo('codigo', $any($event.target).valueAsNumber)">
+    <input type="text" class="form-control" placeholder="Item" [value]="nuevoCatalogo.item || ''"
+        (input)="onChangeNuevo('item', $any($event.target).value)">
+    <input type="text" class="form-control" placeholder="Detalle" [value]="nuevoCatalogo.detalle || ''"
+        (input)="onChangeNuevo('detalle', $any($event.target).value)">
+    <input type="text" class="form-control" placeholder="Color" [value]="nuevoCatalogo.color || ''"
+        (input)="onChangeNuevo('color', $any($event.target).value)">
+
+    <button class="btn btn-success mt-2" (click)="guardarCatalogo()">{{ editando ? 'Actualizar' : 'Guardar' }}</button>
+    <button class="btn btn-secondary mt-2" *ngIf="editando" (click)="cancelarEdicion()">Cancelar</button>
+</div> -->

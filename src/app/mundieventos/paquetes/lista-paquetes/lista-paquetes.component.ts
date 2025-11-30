@@ -32,7 +32,7 @@ export class ListaPaquetesComponent implements OnInit {
   // paquetes: PaqueteInterface[] = [];
   paquetes = signal<PaqueteInterface[]>([]);
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 20;
   itemsPerPage: number = 15;
   isEditMode: boolean = false;
   paqueteSeleccionado: PaqueteInterface | null = null;

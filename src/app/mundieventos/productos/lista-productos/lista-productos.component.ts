@@ -29,7 +29,7 @@ export class ListaProductosComponent implements OnInit {
   // productos: ProductosInterface[] = [];
   productos = signal<ProductosInterface[]>([]);
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 20;
   isEditMode: boolean = false;
   productoSeleccionado: ProductosInterface | null = null;
 

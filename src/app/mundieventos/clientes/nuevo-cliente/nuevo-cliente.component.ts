@@ -38,10 +38,6 @@ export class NuevoClienteComponent {
 
   @Input() cliente: ClientesInterface | null = null;
   @Input() isEditMode: boolean = false;
-  // cliente = input<ClientesInterface | null>(null);
-  // isEditMode = input<boolean>(false);
-
-  // @Output() clienteGuardado = new EventEmitter<ClientesInterface>(); // Evento al guardar producto  
   clienteGuardado = output<ClientesInterface>();
 
   clienteForm!: FormGroup;
