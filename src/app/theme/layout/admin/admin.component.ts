@@ -1,6 +1,7 @@
 // Angular Import
 import { Component, HostListener } from '@angular/core';
 import { Location, LocationStrategy } from '@angular/common';
+import { NavigationItems } from './navigation/navigation';
 
 @Component({
   selector: 'app-admin',
@@ -12,6 +13,7 @@ export class AdminComponent {
   navCollapsed!: boolean;
   navCollapsedMob: boolean;
   windowWidth: number;
+  navigations = NavigationItems;
 
   // constructor
   constructor(

@@ -4,6 +4,12 @@
     <div class="d-flex justify-content-between">
       <!-- Buscador -->
       <app-cliente-search (searchChange)="onSearch($event)"></app-cliente-search>
+
+      <div>
+      <button type="button" class="btn btn-sm btn-light-primary mx-1" (click)="getClientes()">
+        Refresh
+      </button>
+      </div>
       <!-- Nuevo cliente -->
       <app-nuevo-cliente [cliente]="clienteSeleccionado" [isEditMode]="isEditMode"
         (clienteGuardado)="onClienteGuardado($event)">

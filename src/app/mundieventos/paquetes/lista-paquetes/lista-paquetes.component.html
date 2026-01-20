@@ -5,6 +5,11 @@
       <div>
         <app-paquete-search (searchChange)="onSearch($event)"></app-paquete-search>
       </div>
+      <div>
+      <button type="button" class="btn btn-sm btn-light-primary mx-1" (click)="getPaquetes()">
+        Refresh
+      </button>
+      </div>
       <!-- Nuevo producto -->
       <div>
         <button class="btn btn-sm btn-success" (click)="nuevoPaquete()">

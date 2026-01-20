@@ -1,0 +1,42 @@
+<div class="horizontal-menu">
+
+    <!-- BOTÓN HAMBURGUESA (solo mobile) -->
+    <button class="menu-toggle" (click)="toggleMobileMenu()">
+        <i class="feather icon-menu"></i>
+    </button>
+
+    <!-- MENÚ -->
+    <ul class="menu-list" [class.open]="mobileOpen">
+        <ng-container *ngFor="let group of navigations">
+            <ng-container *ngIf="group.children">
+                <li *ngFor="let item of group.children" class="menu-item" [class.dropdown]="item.type === 'collapse'">
+                
+                    <!-- ITEM NORMAL -->
+                    <a *ngIf="item.type === 'item'" [routerLink]="item.url" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{ exact: true }">
+                        <i *ngIf="item.icon" [class]="item.icon"></i>
+                        {{ item.title }}
+                    </a>
+                
+                    <!-- COLLAPSE -->
+                    <a *ngIf="item.type === 'collapse'" class="has-submenu">
+                        <i *ngIf="item.icon" [class]="item.icon"></i>
+                        {{ item.title }}
+                        <i class="feather icon-chevron-down submenu-icon"></i>
+                    </a>
+                
+                    <!-- SUBMENÚ -->
+                    <div class="dropdown-menu" *ngIf="item.type === 'collapse'">
+                        <a *ngFor="let child of item.children" [routerLink]="child.url" routerLinkActive="active"
+                            (click)="mobileOpen=false">
+                            {{ child.title }}
+                        </a>
+                    </div>
+                
+                </li>
+
+            </ng-container>
+        </ng-container>
+    </ul>
+
+</div>

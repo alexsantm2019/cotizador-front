@@ -1,5 +1,5 @@
 import { MenuItems } from "../../../../core/menu/menu";
-import { MenuItemsTemplate } from "./nav-content/menu-template";
+// import { MenuItemsTemplate } from "./nav-content/menu-template";
 
 export interface NavigationItem {
   id: string;

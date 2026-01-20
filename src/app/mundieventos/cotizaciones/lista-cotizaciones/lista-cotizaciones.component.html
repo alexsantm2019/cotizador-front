@@ -73,7 +73,7 @@
 
                 <app-cotizacion-form [isEditMode]="true" [cotizacionExistente]="cotizacion"
                   (cotizacionGuardada)="actualizarListaCotizaciones()" />
-                <app-enviar-cotizacion [cotizacionId]="cotizacion.id" />
+                <!-- <app-enviar-cotizacion [cotizacionId]="cotizacion.id" /> -->
                 <button type="button" class="btn btn-sm btn-light-warning mx-1" (click)="downloadPDF(cotizacion.id)">
                   <i class="feather icon-download"></i>
                 </button>
@@ -114,7 +114,7 @@
                               </tr>
                               <tr>
                                 <th class="table-primary w-25 px-2">IVA:</th>
-                                <td class="w-75">{{ cotizacion.iva | currency }}</td>
+                                <td class="w-75">{{ (cotizacion.iva * cotizacion.subtotal)/100 | currency }}</td>
                               </tr>
                             </tbody>
                           </table>

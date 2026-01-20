@@ -75,7 +75,7 @@ export const MenuItems: NavigationItemInterface[] = [
                 children: [
                     {
                         id: 'cotizaciones',
-                        title: 'Cotizaciones',
+                        title: 'Lista de cotizaciones',
                         type: 'item',
                         url: '/cotizaciones'
                     },

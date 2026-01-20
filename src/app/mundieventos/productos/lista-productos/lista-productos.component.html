@@ -9,7 +9,11 @@
         <label class="form-check-label" for="switchDescripcion">
           Mostrar descripción
         </label>
+        <button type="button" class="btn btn-sm btn-light-primary mx-3" (click)="getProductos()">
+          Refresh
+        </button>
       </div>
+      
       <!-- Nuevo producto -->
       <app-nuevo-producto [producto]="productoSeleccionado" [isEditMode]="isEditMode"
         (productoGuardado)="onProductoGuardado($event)">
@@ -24,7 +28,7 @@
             <th *ngIf="mostrarDescripcion">Descripción</th>
             <th>Cantidad</th>
             <th>Tipo de costo</th>
-            <th>Costo</th>
+            <th>Valor</th>
             <th>Ubicación</th>
             <th>Categoría</th>
             <th>Estado</th>

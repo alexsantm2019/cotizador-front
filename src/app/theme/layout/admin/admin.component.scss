@@ -1,0 +1,36 @@
+.full-width {
+    margin-left: 0 !important;
+    width: 100% !important;   
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.pcoded-navbar.horizontal-menu {
+    position: relative !important;
+    width: 100% !important;
+    height: 56px !important;
+    margin-top: 0 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    z-index: 1029;
+    margin-top: 55px !important;
+}
+
+.pcoded-navbar {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding-top: 60px !important;
+    width: 100% !important
+}
+
+.pcoded-navbar.horizontal-menu {
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    // margin-top: 56px; 
+}
+.pcoded-wrapper{
+    padding: 5px;
+}

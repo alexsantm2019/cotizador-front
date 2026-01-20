@@ -31,6 +31,7 @@ import { FechaEspanolPipe } from './core/pipes/fecha-espanol.pipe';
 // Custom Mundieventos:
 import { NavBarComponent } from './theme/layout/admin/nav-bar/nav-bar.component';
 import { NavigationComponent } from './theme/layout/admin/navigation/navigation.component';
+import { NavHorizontalComponent } from "./theme/layout/admin/navigation/nav-horizontal/nav-horizontal.component";
 // import { NavBarComponent } from '../app/mundieventos/ui/nav-bar/nav-bar.component';
 // import { NavigationComponent } from '../app/mundieventos/ui/navigation/navigation.component';
 
@@ -42,6 +43,7 @@ import { NavigationComponent } from './theme/layout/admin/navigation/navigation.
     ConfigurationComponent,
     NavBarComponent,
     NavigationComponent,
+    NavHorizontalComponent,
     NavLeftComponent,
     NavRightComponent,
     NavSearchComponent,
@@ -52,7 +54,8 @@ import { NavigationComponent } from './theme/layout/admin/navigation/navigation.
     NavItemComponent,
     NavCollapseComponent,
     NavGroupComponent,
-    FechaEspanolPipe
+    FechaEspanolPipe,
+    
   ],
   imports: [HttpClientModule, FormsModule, BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule],
   providers: [
