@@ -71,8 +71,14 @@
                   <i class="feather icon-trash"></i>
                 </button>
 
-                <app-cotizacion-form [isEditMode]="true" [cotizacionExistente]="cotizacion"
-                  (cotizacionGuardada)="actualizarListaCotizaciones()" />
+                <!-- <app-cotizacion-form [isEditMode]="true" [cotizacionExistente]="cotizacion"
+                  (cotizacionGuardada)="actualizarListaCotizaciones()" /> -->
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-light-primary mx-1"
+                    (click)="editarCotizacion(cotizacion)">
+                    <i class="feather icon-edit"></i>
+                  </button>
                 <!-- <app-enviar-cotizacion [cotizacionId]="cotizacion.id" /> -->
                 <button type="button" class="btn btn-sm btn-light-warning mx-1" (click)="downloadPDF(cotizacion.id)">
                   <i class="feather icon-download"></i>
@@ -167,4 +173,10 @@
       </table>
     </div>
   </ng-container>
+  <app-cotizacion-form 
+  *ngIf="mostrarFormulario" 
+  [isEditMode]="true" 
+  [cotizacionExistente]="cotizacionSeleccionada"
+  (cotizacionGuardada)="onCotizacionGuardada()">
+  </app-cotizacion-form>
 </app-delay-animations>

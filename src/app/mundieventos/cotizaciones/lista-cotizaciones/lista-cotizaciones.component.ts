@@ -49,6 +49,9 @@ export class ListaCotizacionesComponent implements OnInit {
   expandedPaquetes: { [key: number]: boolean } = {};
   visibleDetallesId: number | null = null;
 
+  cotizacionSeleccionada: any = null;
+  mostrarFormulario = false;
+
   // Filtros:
   filtroFecha: string | null = null;
   filtroCliente: number | null = null;
@@ -57,6 +60,29 @@ export class ListaCotizacionesComponent implements OnInit {
     this.getCotizaciones();
     this.getClientes();
   }
+
+  // INstancia de formulario de cotizacion para solo ejecutar 1 vez:
+  editarCotizacion(cotizacion: any) {
+  this.cotizacionSeleccionada = cotizacion;
+  this.mostrarFormulario = true;
+}
+
+cerrarFormulario() {
+  this.mostrarFormulario = false;
+  this.cotizacionSeleccionada = null;
+}
+  
+  onCotizacionGuardada() {
+  // this.mostrarForm = false;     // 🔥 ahora sí se destruye
+  this.isEditMode = false;
+  this.cotizacionSeleccionada = null;
+  this.getCotizaciones();     
+}
+
+actualizarListaCotizaciones() {
+  // this.mostrarFormulario = false;
+  this.cotizacionSeleccionada = null;
+}
 
   // Verifica si los detalles de un paquete están visibles
   isDetalleVisible(id: number): boolean {
@@ -113,7 +139,6 @@ export class ListaCotizacionesComponent implements OnInit {
 
       // Aplicar filtro por cliente solo si tiene un valor válido
       const clienteId = this.filtroCliente && Boolean(this.filtroCliente) && this.filtroCliente !== 0 ? parseInt(String(this.filtroCliente), 10) : null;
-      console.log("5. Filtro cliente: ", clienteId);
 
       if (clienteId !== null && cotizacion.cliente !== clienteId) {
         return;
@@ -185,13 +210,13 @@ export class ListaCotizacionesComponent implements OnInit {
         })
   }
 
-  editarCotizacion(cotizacion: any): void {
-    this.editarCotizacionEvent.emit(cotizacion);
-  }
+  // editarCotizacion(cotizacion: any): void {
+  //   this.editarCotizacionEvent.emit(cotizacion);
+  // }
 
-  actualizarListaCotizaciones(): void {
-    this.getCotizaciones();
-  }
+  // actualizarListaCotizaciones(): void {
+  //   this.getCotizaciones();
+  // }
 
   getClientes(): void {
     this.clientesService.getClientes().subscribe({

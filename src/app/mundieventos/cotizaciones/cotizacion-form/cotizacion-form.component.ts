@@ -1,5 +1,5 @@
 // angular import
-import { TemplateRef, Component, OnInit, inject, ChangeDetectorRef, EventEmitter, Output, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { TemplateRef, Component, OnInit, inject, ChangeDetectorRef, EventEmitter, Output, Input, SimpleChanges, OnChanges, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef, NgbModalModule, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -21,6 +21,7 @@ import { ProductosInterface } from '../../../core/models/productos.model';
 import { ClientesInterface } from '../../../core/models/clientes.models';
 import { PaqueteInterface } from '../../../core/models/paquetes.models';
 import { DetalleInterface } from '../../../core/models/detalles.models';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-cotizacion-form',
@@ -46,7 +47,6 @@ export class CotizadorFormComponent implements OnInit {
 
   // Eliminamos las variables individuales y usamos el formulario reactivo
   cotizacionForm!: FormGroup;
-
   clientes: ClientesInterface[] = [];
   paquetes: PaqueteInterface[] = [];
   productos: ProductosInterface[] = [];
@@ -67,6 +67,7 @@ export class CotizadorFormComponent implements OnInit {
   estadosCotizacion: any;
   tiposEvento: any;
   private notyf = new Notyf();
+  @ViewChild('content') modalTemplate!: TemplateRef<any>;
 
   constructor(
     private fb: FormBuilder,
@@ -74,13 +75,29 @@ export class CotizadorFormComponent implements OnInit {
     this.inicializarFormulario();
   }
 
+  // ngOnInit(): void {
+  //   this.getClientes();
+  //   this.getProductos();
+  //   this.getPaquetes();
+  //   this.getEstadosCotizacion();
+  //   this.getTipoEventos();
+  // }
+
   ngOnInit(): void {
-    this.getClientes();
-    this.getProductos();
-    this.getPaquetes();
-    this.getEstadosCotizacion();
-    this.getTipoEventos();
+  if (this.isEditMode) {
+    // Esperamos al ciclo de render
+    setTimeout(() => {
+      this.openModal(this.modalTemplate);
+    });
   }
+
+  this.getClientes();
+  this.getProductos();
+  this.getPaquetes();
+  this.getEstadosCotizacion();
+  this.getTipoEventos();
+}
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['cotizacionExistente'] && changes['cotizacionExistente'].currentValue) {
