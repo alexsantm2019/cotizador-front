@@ -52,6 +52,7 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges  {
   cotizacionSeleccionada: any = null;
   mostrarFormulario = false;
   @Input() year!: number;
+  @Input() refreshTrigger!: number;
 
   // Filtros:
   filtroFecha: string | null = null;
@@ -63,11 +64,12 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges  {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log("En ngOnChanges - year cambiado:", this.year);
     if (changes['year'] && changes['year'].currentValue) {
-      console.log("si cambio");
       this.getCotizaciones();
     }
+    if (changes['refreshTrigger']) {
+    this.getCotizaciones();
+  }
   }
 
   // INstancia de formulario de cotizacion para solo ejecutar 1 vez:

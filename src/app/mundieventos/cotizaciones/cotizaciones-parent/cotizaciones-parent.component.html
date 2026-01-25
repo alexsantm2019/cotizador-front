@@ -27,7 +27,7 @@
     </div>
 
     <div class="col-lg-12">
-      <app-lista-cotizaciones [year]="selectedYear" #listaCotizaciones (editarCotizacionEvent)="editarCotizacion($event)" />
+      <app-lista-cotizaciones [year]="selectedYear" [refreshTrigger]="refreshTrigger" #listaCotizaciones (editarCotizacionEvent)="editarCotizacion($event)" />
     </div>
   </div>
 </div>

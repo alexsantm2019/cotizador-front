@@ -25,6 +25,7 @@ export class CotizacionesParentComponent implements OnInit {
   filterForm: FormGroup;
   years = years; 
   selectedYear: number = new Date().getFullYear();
+  refreshTrigger = 0;
   constructor(private fb: FormBuilder) {
      this.filterForm = this.fb.group({
       //month: [new Date().getMonth() + 1], // Mes actual
@@ -38,6 +39,7 @@ export class CotizacionesParentComponent implements OnInit {
 
   actualizarListaCotizaciones(): void {
     this.selectedYear = this.filterForm.get('year')?.value;
+    this.refreshTrigger++;
   }
 
   // Método que me permite ejecutar "getCotizaciones" en listaCotizaciones
