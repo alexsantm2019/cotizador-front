@@ -1,124 +1,89 @@
-<div class="row w-100 mt-2">
-  <div class="col-lg-12 ">
-    <div class="row">
-      <div class="col-lg-3">
-        <app-card [hidHeader]="true" blockClass="text-center">
-          <i class="fa fa-tag text-c-green d-block f-40"></i>
-          <h4 class="m-t-20">
-            <span class="text-c-green">{{productos.length}}</span>
-            Productos
-          </h4>
-        </app-card>
-      </div>
-      <div class="col-lg-3">
-        <app-card [hidHeader]="true" blockClass="text-center">
-          <i class="fa fa-box-open text-c-blue d-block f-40"></i>
-          <h4 class="m-t-20">
-            <span class="text-c-blue">{{paquetes.length}}</span>
-            Paquetes
-          </h4>
-        </app-card>
-      </div>
-      <div class="col-lg-3">
-        <app-card [hidHeader]="true" blockClass="text-center">
-          <i class="fa fa-money-bill text-c-yellow d-block f-40"></i>
-          <h4 class="m-t-20">
-            <span class="text-c-yellow">{{cotizaciones.length}}</span>
-            Cotizaciones
-          </h4>
-        </app-card>
-      </div>
-      <div class="col-lg-3">
-        <app-card [hidHeader]="true" blockClass="text-center">
-          <i class="fa fa-user-tie text-c-red d-block f-40"></i>
-          <h4 class="m-t-20">
-            <span class="text-c-red">{{clientes.length}}</span>
-            Clientes
-          </h4>
-        </app-card>
+<div class="container-fluid dashboard">
+
+  <!-- KPIs -->
+  <div class="row g-2 mb-2">
+    <div class="col-lg-3 col-md-6">
+      <div class="kpi-card">
+        <i class="fa fa-tag text-success"></i>
+        <div>
+          <h5>{{ productos.length }}</h5>
+          <small>Productos</small>
+        </div>
       </div>
     </div>
 
-    <!-- <app-card [hidHeader]="true" cardClass="bg-primary order-card">
-          <h6 class="text-white text-left">Productos</h6>
-          <h2 class="text-end text-white">
-            <i class="feather icon-file-plus  float-start"></i>
-            <span>10</span>
-          </h2>
-          <p class="m-b-0">
-            Productos
-            <span class="float-end">8</span>
-          </p>
-        </app-card> -->
+    <div class="col-lg-3 col-md-6">
+      <div class="kpi-card">
+        <i class="fa fa-box-open text-primary"></i>
+        <div>
+          <h5>{{ paquetes.length }}</h5>
+          <small>Paquetes</small>
+        </div>
+      </div>
+    </div>
 
-    <!-- <app-card [hidHeader]="true" blockClass="text-center">
-        <i class="fa fa-envelope-open text-c-blue d-block f-40"></i>
-        <h4 class="m-t-20">
-          <span class="text-c-blue">8.62k</span>
-          Subscribers
-        </h4>
-        <p class="m-b-20">Your main list is growing</p>
-        <button class="btn btn-primery btn-sm btn-round">Manage List</button>
-      </app-card> -->
+    <div class="col-lg-3 col-md-6">
+      <div class="kpi-card">
+        <i class="fa fa-money-bill text-warning"></i>
+        <div>
+          <h5>{{ cotizaciones.length }}</h5>
+          <small>Cotizaciones</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+      <div class="kpi-card">
+        <i class="fa fa-user-tie text-danger"></i>
+        <div>
+          <h5>{{ clientes.length }}</h5>
+          <small>Clientes</small>
+        </div>
+      </div>
+    </div>
   </div>
 
-  @if(cotizaciones.length > 0){
-  <form [formGroup]="filterForm" (ngSubmit)="getCotizaciones()" class="w-100">
-    <div class="card">
-      <div class="row p-2 d-flex justify-content-center align-middle mt-1">
-        <div class="col-lg-4">
-          <div class="form-group row">
-            <label for="inputEmail3" class="col-sm-4 col-form-label">Mes:</label>
-            <div class="col-sm-8">
-              <select class="form-select" formControlName="month" id="month">
-                <option *ngFor="let month of months" [value]="month.value">{{ month.label }}</option>
-              </select>
-            </div>
-          </div>
+  <!-- Filtros -->
+  @if (cotizaciones.length > 0) {
+  <form [formGroup]="filterForm" (ngSubmit)="getCotizaciones()" class="filter-bar mb-2">
 
-        </div>
+    <span class="fw-semibold">Mes</span>
+    <select class="form-select form-select-sm w-auto" formControlName="month">
+      <option *ngFor="let month of months" [value]="month.value">
+        {{ month.label }}
+      </option>
+    </select>
 
-        <div class="col-lg-4">
-          <div class="form-group row text-center">
-            <label for="inputEmail3" class="col-sm-4 col-form-label">Año:</label>
-            <div class="col-sm-8">
-              <select class="form-select" formControlName="year" id="year">
-                <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-2">
-          <button type="submit" class="btn btn-secondary mx-1" (click)="getCotizaciones()">Filtrar</button>
-        </div>
-        <div class="col-lg-2">
-          <span class="d-inline mr-4 h4">{{cotizaciones.length}} </span> <span class="ml-3 d-inline">registros</span>
-        </div>
+    <span class="fw-semibold">Año</span>
+    <select class="form-select form-select-sm w-auto" formControlName="year">
+      <option *ngFor="let year of years" [ngValue]="year">
+        {{ year }}
+      </option>
+    </select>
 
-      </div>
-    </div>
+    <button class="btn btn-sm btn-secondary">
+      Filtrar
+    </button>
+
+    <span class="ms-auto text-muted small">
+      {{ cotizaciones.length }} registros
+    </span>
   </form>
 
-
-
-  <div class="col-lg-12 text-center">
-    <app-card cardTitle="Cotizaciones este mes" [options]="false">
-      <apx-chart [labels]="pie1CAC.labels!" [chart]="pie1CAC.chart!" [dataLabels]="pie1CAC.dataLabels!"
-        [series]="pie1CAC.series!" [colors]="pie1CAC.colors!" [responsive]="pie1CAC.responsive!"
-        [legend]="pie1CAC.legend!"></apx-chart>
-    </app-card>
+  <!-- Gráfico -->
+  <div class="card shadow-sm">
+    <div class="card-header py-2">
+      <strong>Cotizaciones este mes</strong>
+    </div>
+    <div class="card-body p-2 d-flex justify-content-center">
+      <apx-chart [labels]="pie1CAC.labels!" [chart]="pie1CAC.chart!" [series]="pie1CAC.series!"
+        [colors]="pie1CAC.colors!" [legend]="pie1CAC.legend!" [responsive]="pie1CAC.responsive!">
+      </apx-chart>
+    </div>
   </div>
-  <!-- <div class="col-md-6">
-    <app-card cardTitle="Pie Chart donut" [options]="false">
-      <apx-chart [plotOptions]="pie2CAC.plotOptions!" [chart]="pie2CAC.chart!" [dataLabels]="pie2CAC.dataLabels!"
-        [series]="pie2CAC.series!" [colors]="pie2CAC.colors!" [responsive]="pie2CAC.responsive!"
-        [legend]="pie2CAC.legend!"></apx-chart>
-    </app-card>
-  </div> -->
-  <!-- [ variant-chart ] end -->
 
-  }@else {
-  <div class="alert alert-warning h3">
+  } @else {
+  <div class="alert alert-warning mt-3">
     <i class="feather icon-alert-triangle"></i>
     No existen cotizaciones
   </div>
