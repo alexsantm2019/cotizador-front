@@ -1,5 +1,5 @@
 // angular import
-import { AfterViewInit, OnInit, ViewChild, inject, TemplateRef, Output, EventEmitter } from '@angular/core';
+import { AfterViewInit, OnInit, ViewChild, inject, TemplateRef, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Observable, catchError, tap, throwError } from 'rxjs';
@@ -28,7 +28,7 @@ import { DelayAnimationsComponent } from '../../ui/delay/delay-animations.compon
   templateUrl: './lista-cotizaciones.component.html',
   styleUrls: ['./lista-cotizaciones.component.scss']
 })
-export class ListaCotizacionesComponent implements OnInit {
+export class ListaCotizacionesComponent implements OnInit, OnChanges  {
   @ViewChild(CotizadorFormComponent) cotizadorFormComponent!: CotizadorFormComponent;
   @Output() editarCotizacionEvent = new EventEmitter<any>();
 
@@ -51,14 +51,23 @@ export class ListaCotizacionesComponent implements OnInit {
 
   cotizacionSeleccionada: any = null;
   mostrarFormulario = false;
+  @Input() year!: number;
 
   // Filtros:
   filtroFecha: string | null = null;
   filtroCliente: number | null = null;
 
   ngOnInit(): void {
-    this.getCotizaciones();
+    // this.getCotizaciones();
     this.getClientes();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log("En ngOnChanges - year cambiado:", this.year);
+    if (changes['year'] && changes['year'].currentValue) {
+      console.log("si cambio");
+      this.getCotizaciones();
+    }
   }
 
   // INstancia de formulario de cotizacion para solo ejecutar 1 vez:
@@ -95,17 +104,48 @@ actualizarListaCotizaciones() {
   }
 
   // Obtiene los paquetes desde el servicio
+  // getCotizaciones(): void {
+  //   this.cotizacionService.getCotizaciones().subscribe({
+  //     next: (data) => {
+  //       this.cotizaciones = data;
+  //       this.groupCotizacionesByFecha();
+  //     },
+  //     error: (error) => {
+  //       console.error('Error en la búsqueda de paquetes:', error);
+  //     },
+  //   });
+  // }
+
   getCotizaciones(): void {
-    this.cotizacionService.getCotizaciones().subscribe({
+    if (this.year) {
+    this.cotizacionService.getCotizacionesPorFecha(this.year).subscribe({
       next: (data) => {
         this.cotizaciones = data;
         this.groupCotizacionesByFecha();
       },
       error: (error) => {
-        console.error('Error en la búsqueda de paquetes:', error);
-      },
+        console.error('Error al obtener cotizaciones por año:', error);
+      }
     });
-  }
+  } 
+}
+
+  //   getCotizacionesByYear(): void {
+  //   const year = this.filterForm.get('year')?.value;
+  //   const month = this.filterForm.get('month')?.value;
+  //   this.cotizacionesService.getCotizacionesPorFecha(year, month).subscribe({
+  //     next: (data) => {
+  //       this.cotizaciones = data;
+  //       this.procesarDatosParaGrafico(); // Procesar los datos para los gráficos
+
+  //       // Forzar la detección de cambios para actualizar la vista
+  //       this.cdr.detectChanges();
+  //     },
+  //     error: (error) => {
+  //       console.error('Error en la búsqueda de cotizaciones:', error);
+  //     },
+  //   });
+  // }
 
   limpiarFiltros(): void {
     // Poner ambos filtros en null

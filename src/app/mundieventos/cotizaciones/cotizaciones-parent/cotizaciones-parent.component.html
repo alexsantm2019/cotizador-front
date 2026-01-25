@@ -1,13 +1,34 @@
-<div class="row">
-  <div class="col-lg-12 mb-1 mt-2">
-    <app-cotizacion-form [isEditMode]="false" [cotizacionExistente]="null"
-      (cotizacionGuardada)="actualizarListaCotizaciones()" />
+<app-card cardTitle="" [options]="false" headerClass="d-none" blockClass="table-border-style">
+<div class="row py-1">
+  <div class="col-lg-12 ">
+    <!-- <h3w class="mb-0">Cotizaciones</h3> -->
+    <div class="d-flex justify-content-between align-items-center p-2">
+      <!-- FORM COTIZACIÓN -->
+      <app-cotizacion-form
+        [isEditMode]="false"
+        [cotizacionExistente]="null"
+        (cotizacionGuardada)="actualizarListaCotizaciones()"
+      ></app-cotizacion-form>
 
-      <button type="button" class="btn btn-sm btn-light-primary mx-1" (click)="actualizarListaCotizaciones()">
-        Refresh 
-      </button>
-  </div>
-  <div class="col-lg-12">
-    <app-lista-cotizaciones #listaCotizaciones (editarCotizacionEvent)="editarCotizacion($event)" />
+      <!-- FILTRO -->
+      <form [formGroup]="filterForm" class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center">
+          <label for="year" class="me-2 mb-0 fw-semibold">Año:</label>
+
+          <select id="year" class="form-select form-select-sm" formControlName="year" style="min-width: 120px">
+            <option *ngFor="let year of years" [ngValue]="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-sm btn-light-primary" (click)="actualizarListaCotizaciones()">Refresh</button>
+      </form>
+    </div>
+
+    <div class="col-lg-12">
+      <app-lista-cotizaciones [year]="selectedYear" #listaCotizaciones (editarCotizacionEvent)="editarCotizacion($event)" />
+    </div>
   </div>
 </div>
+</app-card>

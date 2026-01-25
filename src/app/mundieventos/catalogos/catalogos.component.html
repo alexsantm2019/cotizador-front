@@ -1,7 +1,7 @@
-<div class="row">
-
+<app-card cardTitle="" [options]="false"  headerClass="d-none"  blockClass="table-border-style">
+<div class="row">    
     <div class="col-lg-3">
-        <div class="mt-3" *ngIf="catalogos.length > 0">
+        <div class="mt-1" *ngIf="catalogos.length > 0">
 
             <h3>Nuevo catálogo</h3>
 
@@ -94,25 +94,6 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </div>    
 </div>
-
-
-
-<!-- <h5 *ngIf="catalogos.length > 0">{{ editando ? 'Editar catálogo' : 'Nuevo catálogo' }}</h5>
-<div class="mt-3 d-flex" *ngIf="catalogos.length > 0">
-
-    <input type="number" class="form-control" min="0" placeholder="Grupo" [value]="nuevoCatalogo.grupo || ''"
-        (input)="onChangeNuevo('grupo', $any($event.target).valueAsNumber)">
-    <input type="number" class="form-control" min="0" placeholder="Código" [value]="nuevoCatalogo.codigo || ''"
-        (input)="onChangeNuevo('codigo', $any($event.target).valueAsNumber)">
-    <input type="text" class="form-control" placeholder="Item" [value]="nuevoCatalogo.item || ''"
-        (input)="onChangeNuevo('item', $any($event.target).value)">
-    <input type="text" class="form-control" placeholder="Detalle" [value]="nuevoCatalogo.detalle || ''"
-        (input)="onChangeNuevo('detalle', $any($event.target).value)">
-    <input type="text" class="form-control" placeholder="Color" [value]="nuevoCatalogo.color || ''"
-        (input)="onChangeNuevo('color', $any($event.target).value)">
-
-    <button class="btn btn-success mt-2" (click)="guardarCatalogo()">{{ editando ? 'Actualizar' : 'Guardar' }}</button>
-    <button class="btn btn-secondary mt-2" *ngIf="editando" (click)="cancelarEdicion()">Cancelar</button>
-</div> -->
+</app-card>

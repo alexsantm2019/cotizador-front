@@ -1,6 +1,7 @@
-<div class="container">
+<app-card cardTitle="" [options]="false" headerClass="d-none" blockClass="table-border-style">
+<div class="container-fluid">
   <!-- <h2>Crear Paquete</h2> -->
-  <h2>{{ paqueteId ? 'Editar Paquete' : 'Crear Paquete' }}</h2>
+  <h4>{{ paqueteId ? 'Editar Paquete' : 'Crear Paquete' }}</h4>
   <!-- <form [formGroup]="paqueteForm" (ngSubmit)="createPaquete()"> -->
     
   <form [formGroup]="paqueteForm">
@@ -53,7 +54,7 @@
 </div>
 
     <hr />
-    <h3>Detalles del Paquete</h3>
+    <h4>Detalles del Paquete</h4>
         <!-- Botón para Agregar Producto -->
         <button type="button" class="btn-sm btn btn-light-primary mb-2" (click)="addDetalle()">
           <i class="feather icon-plus"></i> Agregar Producto
@@ -148,3 +149,4 @@
 </div>
   </form>
 </div>
+</app-card>

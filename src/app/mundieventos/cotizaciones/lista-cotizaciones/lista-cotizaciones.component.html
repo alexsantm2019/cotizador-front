@@ -1,7 +1,4 @@
-<div class="card p-2 d-flex justify-content-center align-middle">
-
   <div class="row my-2 ">
-
     <div class="form-group col-lg-5">
       <label for="filtroFecha">Filtrar por Fecha:</label>
       <input type="date" id="filtroFecha" class="form-control" [(ngModel)]="filtroFecha" (change)="aplicarFiltros()">
@@ -21,7 +18,7 @@
       <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar Filtros</button>
     </div>
   </div>
-</div>
+
 <!-- <pre>{{groupedCotizaciones | json}}</pre> -->
 <app-delay-animations [delay]="1000">
   <ng-container *ngFor="let group of groupedCotizaciones">

@@ -1,6 +1,5 @@
-<div class="row">
-
-  <app-card cardTitle="Clientes" [options]="false" blockClass="table-border-style">
+<app-card cardTitle="" [options]="false"  headerClass="d-none"  blockClass="table-border-style">
+<div class="row"> 
     <div class="d-flex justify-content-between">
       <!-- Buscador -->
       <app-cliente-search (searchChange)="onSearch($event)"></app-cliente-search>
@@ -30,6 +29,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let cliente of getPagedClientes(); let i = index">
+            {{filteredClientes().length}}
             <!-- <th scope="row">{{ i + 1 }}</th> -->
             <td>{{ cliente.nombre }}</td>
             <td>{{ cliente.identificacion }}</td>
@@ -47,7 +47,7 @@
               </button>
             </td>
           </tr>
-          <tr *ngIf="clientes.length === 0">
+          <tr *ngIf="filteredClientes().length === 0">
             <td colspan="8" class="text-center">No hay clientes disponibles</td>
           </tr>
         </tbody>
@@ -69,5 +69,6 @@
       </nav>
 
     </div>
-  </app-card>
+  
 </div>
+</app-card>

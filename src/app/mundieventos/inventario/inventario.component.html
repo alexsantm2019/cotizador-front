@@ -1,15 +1,18 @@
-<div class="row">
+<app-card cardTitle="" [options]="false" headerClass="d-none" blockClass="table-border-style">
+<div class="row">  
   <div class="col-sm-12">
-    <app-inventario-search (searchChange)="onSearch($event)"></app-inventario-search>
-    <div class="d-flex  justify-content-end py1 mb-2">
-
-      <div style="width: 275px" class="bg-warning-light text-center  mx-2">Por terminar (entre 1 y
+    
+    <div class="d-flex  justify-content-between py1 mb-2">
+      <app-inventario-search (searchChange)="onSearch($event)"></app-inventario-search>
+      <div class="d-inline">
+      <div style="width: 275px" class="bg-warning-light text-center d-inline mx-2 p-2">Por terminar (entre 1 y
         {{minimoProductosInventario}}
         registros)
       </div>
-      <div style="width: 200px" class="bg-danger-light text-center mx-2">Sin cantidad / agotado</div>
+      <div style="width: 200px" class="bg-danger-light text-center d-inline mx-2 p-2">Sin cantidad / agotado</div>
+      </div>
     </div>
-    <app-card cardTitle="Inventario" [options]="false" blockClass="table-border-style">
+    
       <div class="table-responsive">
         <table class="table table-sm table-hover">
           <thead>
@@ -78,8 +81,8 @@
         </nav>
 
       </div>
-    </app-card>
-
-
+    
   </div>
+  
 </div>
+</app-card>

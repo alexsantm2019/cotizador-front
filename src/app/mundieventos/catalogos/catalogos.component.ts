@@ -5,10 +5,11 @@ import { CatalogosService } from '../../core/services/catalogos/catalogos.servic
 import { CatalogosInterface } from '../../core/models/catalogos.models';
 import { Notyf } from 'notyf';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SharedModule } from 'src/app/theme/shared/shared.module';
 @Component({
   selector: 'app-catalogos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule],
   templateUrl: './catalogos.component.html',
   styleUrls: ['./catalogos.component.scss']
 })

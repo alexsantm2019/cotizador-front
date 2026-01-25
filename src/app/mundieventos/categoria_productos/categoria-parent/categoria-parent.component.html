@@ -1,3 +1,4 @@
+<app-card cardTitle="" headerClass="d-none" [options]="false" blockClass="table-border-style">
 <div class="row">
   <div class="col-lg-5 mb-1">
     <app-categoria-form [isEditMode]="isEditMode" [categoriaEditada]="categoriaSeleccionada"
@@ -6,3 +7,6 @@
   <div class="col-lg-7">
     <app-lista-categorias #listaCategorias (editarCategoriaEvent)="editarCategoria($event)"></app-lista-categorias>
   </div>
+</div>
+</app-card>
+

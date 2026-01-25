@@ -24,9 +24,21 @@ export class CotizacionesService {
     return this.http.get<CotizacionInterface>(`${this.apiUrl}/get_cotizacion_by_id/${id}`);
   }
 
-  getCotizacionesPorFecha(year: number, month: number): Observable<CotizacionInterface[]> {
-    return this.http.get<CotizacionInterface[]>(`${this.apiUrl}/get_cotizaciones_by_fecha/${year}/${month}/`);
+  // getCotizacionesPorFecha(year: number, month?: number | null): Observable<CotizacionInterface[]> {
+  //   return this.http.get<CotizacionInterface[]>(`${this.apiUrl}/get_cotizaciones_by_fecha/${year}/${month}/`);
+  // }
+  getCotizacionesPorFecha(
+  year: number,
+  month?: number
+): Observable<CotizacionInterface[]> {
+
+  let url = `${this.apiUrl}/get_cotizaciones_by_fecha/${year}/`;
+
+  if (month !== undefined && month !== null) {
+    url += `${month}/`;
   }
+  return this.http.get<CotizacionInterface[]>(url);
+}
 
   createCotizacion(data: any): Observable<CotizacionInterface> {
     return this.http.post<CotizacionInterface>(`${this.apiUrl}/create_cotizacion`, data);

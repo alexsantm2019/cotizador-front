@@ -56,12 +56,6 @@ export class ListaClientesComponent implements OnInit {
       },
     });
   }
-
-  // getPagedClientes(): ClientesInterface[] {
-  //   const startIndex = (this.currentPage - 1) * this.pageSize;
-  //   return this.filteredClientes.slice(startIndex, startIndex + this.pageSize);
-  // }
-
   getPagedClientes(): ClientesInterface[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return this.filteredClientes().slice(startIndex, startIndex + this.pageSize);
