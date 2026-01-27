@@ -93,9 +93,6 @@
                   <div class="row justify-content-center">
                     <div class="col-md-12">
                       <div class="card shadow">
-                        <!-- <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Detalles del Evento</h5>
-                      </div> -->
                         <div class="card-body p-0">
                           <table class="table table-bordered mb-0 table-sm">
                             <tbody>
@@ -126,10 +123,8 @@
                     </div>
                   </div>
                 </div>
-
                 <!-- Fin detalles del evento -->
               </td>
-
 
               <td colspan="7">
                 <div *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0">
@@ -170,10 +165,15 @@
       </table>
     </div>
   </ng-container>
+
+  
   <app-cotizacion-form 
   *ngIf="mostrarFormulario" 
+  class="modal-overlay"
   [isEditMode]="true" 
   [cotizacionExistente]="cotizacionSeleccionada"
-  (cotizacionGuardada)="onCotizacionGuardada()">
+  (cotizacionGuardada)="onCotizacionGuardada()"
+  (modalCerrado)="onModalCerrado()">
   </app-cotizacion-form>
+  
 </app-delay-animations>

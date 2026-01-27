@@ -1,3 +1,14 @@
 .td-user{
     width:60px;
 }
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1055;
+    background: rgba(0, 0, 0, 0.4);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

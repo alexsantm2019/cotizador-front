@@ -78,16 +78,23 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges  {
   this.mostrarFormulario = true;
 }
 
+
 cerrarFormulario() {
   this.mostrarFormulario = false;
   this.cotizacionSeleccionada = null;
 }
   
   onCotizacionGuardada() {
-  // this.mostrarForm = false;     // 🔥 ahora sí se destruye
+    this.isEditMode = false;
+    this.mostrarFormulario = false;
+    this.cotizacionSeleccionada = null;
+    this.getCotizaciones();     
+  }
+
+  onModalCerrado() {
+  this.mostrarFormulario = false;
   this.isEditMode = false;
   this.cotizacionSeleccionada = null;
-  this.getCotizaciones();     
 }
 
 actualizarListaCotizaciones() {
@@ -131,23 +138,6 @@ actualizarListaCotizaciones() {
     });
   } 
 }
-
-  //   getCotizacionesByYear(): void {
-  //   const year = this.filterForm.get('year')?.value;
-  //   const month = this.filterForm.get('month')?.value;
-  //   this.cotizacionesService.getCotizacionesPorFecha(year, month).subscribe({
-  //     next: (data) => {
-  //       this.cotizaciones = data;
-  //       this.procesarDatosParaGrafico(); // Procesar los datos para los gráficos
-
-  //       // Forzar la detección de cambios para actualizar la vista
-  //       this.cdr.detectChanges();
-  //     },
-  //     error: (error) => {
-  //       console.error('Error en la búsqueda de cotizaciones:', error);
-  //     },
-  //   });
-  // }
 
   limpiarFiltros(): void {
     // Poner ambos filtros en null

@@ -68,6 +68,7 @@ export class CotizadorFormComponent implements OnInit {
   tiposEvento: any;
   private notyf = new Notyf();
   @ViewChild('content') modalTemplate!: TemplateRef<any>;
+  @Output() modalCerrado = new EventEmitter<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -432,35 +433,39 @@ export class CotizadorFormComponent implements OnInit {
         descuento: parseFloat(item.descuento)
       }))
     };
-
     if (cotizacion.id) {
-      // Editar cotización existente
-      console.log("Cotizacion: " + JSON.stringify(cotizacion))
       this.cotizacionesService.updateCotizacion(cotizacion.id, cotizacion).subscribe({
-        next: (response) => {
+        next: () => {
           this.showSuccess('Cotización actualizada exitosamente');
+
+          // 🔥 1. EMITIR
           this.cotizacionGuardada.emit();
+
+          // 🔥 2. ESPERAR AL SIGUIENTE TICK
+          Promise.resolve().then(() => {
+            this.limpiarFormulario();
+            this.closeModal();
+          });
         },
         error: (error) => {
-          this.showError('Error al actualizar la cotización: ' + error);
-          console.error('Error:', error);
+          this.showError('Error al actualizar la cotización');
+          console.error(error);
         }
       });
     } else {
-      // Crear una nueva cotización
       this.cotizacionesService.createCotizacion(cotizacion).subscribe({
-        next: (response) => {
+        next: () => {
           this.showSuccess('Cotización guardada exitosamente');
           this.cotizacionGuardada.emit();
-        },
-        error: (error) => {
-          this.showError('Error al guardar la cotización');
-          console.error('Error:', error);
+
+          Promise.resolve().then(() => {
+            this.limpiarFormulario();
+            this.closeModal();
+          });
         }
       });
     }
-    this.limpiarFormulario();
-    this.closeModal();
+
   }
 
   marcarCamposComoSucios(): void {
@@ -502,9 +507,28 @@ export class CotizadorFormComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  // openModal(content: TemplateRef<any>) {
+  //   this.modalRef = this.modalService.open(content, { size: 'lg', ariaLabelledBy: 'modal-basic-title' });
+  // }
   openModal(content: TemplateRef<any>) {
-    this.modalRef = this.modalService.open(content, { size: 'lg', ariaLabelledBy: 'modal-basic-title' });
-  }
+  this.modalRef = this.modalService.open(content, {
+    size: 'lg',
+    backdrop: true,
+    keyboard: true
+  });
+
+  this.modalRef.result
+    .then(
+      () => {
+        // Se cerró con close()
+        this.modalCerrado.emit();
+      },
+      () => {
+        // Se cerró con dismiss (click afuera, ESC, X)
+        this.modalCerrado.emit();
+      }
+    );
+}
 
   closeModal() {
     if (this.modalRef) {

@@ -29,7 +29,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let cliente of getPagedClientes(); let i = index">
-            {{filteredClientes().length}}
             <!-- <th scope="row">{{ i + 1 }}</th> -->
             <td>{{ cliente.nombre }}</td>
             <td>{{ cliente.identificacion }}</td>
