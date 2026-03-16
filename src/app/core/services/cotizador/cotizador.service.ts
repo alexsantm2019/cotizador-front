@@ -9,12 +9,10 @@ import { CotizacionInterface } from '../../models/cotizaciones.model';
   providedIn: 'root'
 })
 export class CotizacionesService {
-
   private server = environment.apiUrl;
   public apiUrl = `${this.server}/api/cotizaciones`;
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   getCotizaciones(): Observable<CotizacionInterface[]> {
     return this.http.get<CotizacionInterface[]>(`${this.apiUrl}/get_cotizaciones`);
@@ -27,18 +25,27 @@ export class CotizacionesService {
   // getCotizacionesPorFecha(year: number, month?: number | null): Observable<CotizacionInterface[]> {
   //   return this.http.get<CotizacionInterface[]>(`${this.apiUrl}/get_cotizaciones_by_fecha/${year}/${month}/`);
   // }
-  getCotizacionesPorFecha(
-  year: number,
-  month?: number
-): Observable<CotizacionInterface[]> {
+  getCotizacionesPorFecha(year: number, month?: number): Observable<CotizacionInterface[]> {
+    let url = `${this.apiUrl}/get_cotizaciones_by_fecha/${year}/`;
 
-  let url = `${this.apiUrl}/get_cotizaciones_by_fecha/${year}/`;
-
-  if (month !== undefined && month !== null) {
-    url += `${month}/`;
+    if (month !== undefined && month !== null) {
+      url += `${month}/`;
+    }
+    return this.http.get<CotizacionInterface[]>(url);
   }
-  return this.http.get<CotizacionInterface[]>(url);
-}
+
+  getCotizacionesAgrupadas(year: number, month: number | null, page: number = 1, pageSize: number = 50) {
+    let url = `${this.apiUrl}/get_cotizaciones_agrupadas/${year}/`;
+    if (month) {
+      url += `${month}/`;
+    }
+    return this.http.get(url, {
+      params: {
+        page: page.toString(),
+        page_size: pageSize.toString()
+      }
+    });
+  }
 
   createCotizacion(data: any): Observable<CotizacionInterface> {
     return this.http.post<CotizacionInterface>(`${this.apiUrl}/create_cotizacion`, data);
@@ -59,14 +66,17 @@ export class CotizacionesService {
   }
 
   downloadPDF(id: number): Observable<HttpResponse<Blob>> {
-    return this.http.post(`${this.apiUrl}/download_pdf/${id}`, {}, {
-      responseType: 'blob',
-      observe: 'response'
-    });
+    return this.http.post(
+      `${this.apiUrl}/download_pdf/${id}`,
+      {},
+      {
+        responseType: 'blob',
+        observe: 'response'
+      }
+    );
   }
 
   enviarPorWhatsApp(id: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/enviar_whatsapp/${id}`, {});
   }
-
 }

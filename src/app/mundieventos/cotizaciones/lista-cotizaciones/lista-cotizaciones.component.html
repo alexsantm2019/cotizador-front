@@ -1,39 +1,55 @@
-  <div class="row my-2 ">
-    <div class="form-group col-lg-5">
-      <label for="filtroFecha">Filtrar por Fecha:</label>
-      <input type="date" id="filtroFecha" class="form-control" [(ngModel)]="filtroFecha" (change)="aplicarFiltros()">
-    </div>
-
-    <div class="form-group col-lg-5">
-      <label for="cliente" class="form-label">Filtrar por Cliente</label>
-      <select [(ngModel)]="filtroCliente" name="filtroCliente" id="filtroCliente" class="form-select"
-        (change)="aplicarFiltros()">
-        <option [ngValue]="null">Seleccione un cliente</option>
-        <option *ngFor="let c of clientes" [ngValue]="c.id">
-          {{ c.nombre }}
-        </option>
-      </select>
-    </div>
-    <div class="form-group col-lg-2 mt-4">
-      <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar Filtros</button>
-    </div>
+<div class="row my-2">
+  <div class="form-group col-lg-5">
+    <label for="filtroFecha">Filtrar por Fecha:</label>
+    <input type="date" id="filtroFecha" class="form-control" [(ngModel)]="filtroFecha" (change)="aplicarFiltros()" />
   </div>
 
-<!-- <pre>{{groupedCotizaciones | json}}</pre> -->
-<app-delay-animations [delay]="1000">
-  <ng-container *ngFor="let group of groupedCotizaciones">
+  <div class="form-group col-lg-5">
+    <label for="cliente" class="form-label">Filtrar por Cliente</label>
+    <select [(ngModel)]="filtroCliente" name="filtroCliente" id="filtroCliente" class="form-select" (change)="aplicarFiltros()">
+      <option [ngValue]="null">Seleccione un cliente</option>
+      <option *ngFor="let c of clientes" [ngValue]="c.id">
+        {{ c.nombre }}
+      </option>
+    </select>
+  </div>
 
-    <!-- Encabezado del grupo -->
-    <h5 class="text-left mt-3 mb-2">{{ group.fecha | date: 'dd MMM yyyy'}}</h5>
-    <div class="table-responsive w-100 card">
-      <table class="table table-sm">
-        <thead>
+  <div class="form-group col-lg-2 mt-4">
+    <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar Filtros</button>
+  </div>
+</div>
+
+<!-- Indicador de carga global -->
+<div *ngIf="isLoading && groupedByMonth.length === 0" class="text-center my-5">
+  <div class="spinner-border text-primary" style="width: 3rem; height: 3rem" role="status">
+    <span class="visually-hidden">Cargando...</span>
+  </div>
+  <p class="mt-2 text-muted">Cargando cotizaciones...</p>
+</div>
+
+<app-delay-animations [delay]="1000">
+  <ng-container *ngFor="let month of groupedByMonth; trackBy: trackByMonthKey">
+    <!-- 🎯 TÍTULO DEL MES con estilo mejorado -->
+    <div class="month-header d-flex justify-content-between align-items-center mt-5 mb-3 p-3 bg-light rounded shadow-sm">
+      <div class="d-flex align-items-center">
+        <i class="feather icon-calendar me-2 text-primary" style="font-size: 1.5rem"></i>
+        <h3 class="mb-0 text-primary fw-bold">{{ month.month_name }}</h3>
+      </div>
+      <div class="d-flex align-items-center">
+        <span class="badge bg-info text-white p-2">
+          <i class="feather icon-file-text me-1"></i>
+          {{ month.total_en_mes }} cotización(es)
+        </span>
+      </div>
+    </div>
+
+    <!-- Tabla de cotizaciones del mes -->
+    <div class="table-responsive w-100 card shadow-sm">
+      <table class="table table-sm table-hover mb-0">
+        <thead class="table-light">
           <tr class="text-center">
-            <!-- <th>#</th> -->
             <th>Nombre</th>
             <th>Cliente</th>
-            <!-- <th>IVA</th>
-          <th>Subtotal</th> -->
             <th>Fecha de evento</th>
             <th>Total</th>
             <th>Estado</th>
@@ -42,79 +58,97 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let cotizacion of group.cotizaciones; let i = index">
+          <ng-container *ngFor="let cotizacion of month.cotizaciones; trackBy: trackByCotizacionId">
             <!-- Fila principal de la cotización -->
-            <tr>
-              <!-- <th scope="row">{{ i + 1 }}</th> -->
-              <td class="text-left ml-1">{{ cotizacion.nombre_evento }}</td>
-              <td class="text-center">{{ cotizacion.info_cliente?.nombre }}</td>
-              <!-- <td class="text-center">{{ cotizacion.iva | currency }}</td>
-            <td class="text-center">{{ cotizacion.subtotal | currency }}</td> -->
-              <td class="text-center">{{ cotizacion.fecha_evento | date: 'EEE, d \'de\' MMMM yyyy' }}</td>
-              <td class="text-center">{{ cotizacion.total | currency }}</td>
+            <tr class="align-middle">
+              <td class="text-left">{{ cotizacion.nombre_evento || 'Sin nombre' }}</td>
+              <td class="text-center">{{ cotizacion.info_cliente?.nombre || 'N/A' }}</td>
+              <td class="text-center">{{ cotizacion.fecha_evento | date: "EEE, d 'de' MMMM yyyy" }}</td>
+              <td class="text-center fw-bold">{{ cotizacion.total | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
               <td class="text-center">
-                <span [ngStyle]="{ 'color': cotizacion.estado_info?.color }" class="text-center">
-                  {{ cotizacion.estado_info?.item }}
+                <span
+                  [ngStyle]="{
+                    color: cotizacion.estado_info?.color,
+                    fontWeight: '500'
+                  }"
+                  class="badge"
+                  [style.background]="cotizacion.estado_info?.color + '20'"
+                  [style.padding]="'0.5rem 1rem'"
+                >
+                  {{ cotizacion.estado_info?.item || 'N/A' }}
                 </span>
               </td>
-              <td class="text-center td-user text-muted">{{ cotizacion.user }}</td>
-              <td class="text-center d-flex justify-content-center">
-                <button *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0" type="button"
-                  class="btn btn-sm btn-light-info" (click)="toggleDetalles(cotizacion.id)">
-                  <i class="feather" [class]="isDetalleVisible(cotizacion.id) ? 'icon-eye-off' : 'icon-eye'"></i>
-                </button>
-                <button type="button" class="btn btn-sm btn-light-danger mx-1"
-                  (click)="deleteCotizacion(cotizacion.id)">
-                  <i class="feather icon-trash"></i>
-                </button>
+              <td class="text-center text-muted">{{ cotizacion.user || 'Sistema' }}</td>
+              <td class="text-center">
+                <div class="btn-group" role="group">
+                  <button
+                    *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0"
+                    type="button"
+                    class="btn btn-sm btn-outline-info"
+                    (click)="toggleDetalles(cotizacion.id)"
+                    [attr.title]="isDetalleVisible(cotizacion.id) ? 'Ocultar detalles' : 'Ver detalles'"
+                  >
+                    <i class="feather" [class]="isDetalleVisible(cotizacion.id) ? 'icon-eye-off' : 'icon-eye'"></i>
+                  </button>
 
-                <!-- <app-cotizacion-form [isEditMode]="true" [cotizacionExistente]="cotizacion"
-                  (cotizacionGuardada)="actualizarListaCotizaciones()" /> -->
                   <button
                     type="button"
-                    class="btn btn-sm btn-light-primary mx-1"
-                    (click)="editarCotizacion(cotizacion)">
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="deleteCotizacion(cotizacion.id)"
+                    title="Eliminar cotización"
+                  >
+                    <i class="feather icon-trash"></i>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="editarCotizacion(cotizacion)"
+                    title="Editar cotización"
+                  >
                     <i class="feather icon-edit"></i>
                   </button>
-                <!-- <app-enviar-cotizacion [cotizacionId]="cotizacion.id" /> -->
-                <button type="button" class="btn btn-sm btn-light-warning mx-1" (click)="downloadPDF(cotizacion.id)">
-                  <i class="feather icon-download"></i>
-                </button>
 
+                  <button type="button" class="btn btn-sm btn-outline-warning" (click)="downloadPDF(cotizacion.id)" title="Descargar PDF">
+                    <i class="feather icon-download"></i>
+                  </button>
+                </div>
               </td>
             </tr>
-            <!-- Fila de detalles de la cotización -->
-            <tr *ngIf="isDetalleVisible(cotizacion.id)">
 
+            <!-- Fila de detalles de la cotización (expandible) -->
+            <tr *ngIf="isDetalleVisible(cotizacion.id)" class="table-secondary">
               <td colspan="2">
-
-                <!-- Detalles del evento -->
-                <div class="container py-1">
-                  <div class="row justify-content-center">
+                <div class="container py-2">
+                  <div class="row">
                     <div class="col-md-12">
-                      <div class="card shadow">
+                      <div class="card border-0 bg-transparent">
                         <div class="card-body p-0">
-                          <table class="table table-bordered mb-0 table-sm">
+                          <h6 class="card-title text-primary mb-2">
+                            <i class="feather icon-info me-1"></i>
+                            Detalles del evento
+                          </h6>
+                          <table class="table table-sm table-bordered bg-white">
                             <tbody>
                               <tr>
-                                <th class="table-primary w-25 px-2">Vigencia:</th>
-                                <td class="w-75">{{ cotizacion.fecha_vigencia | date: 'EEE, d \'de\' MMMM yyyy' }}</td>
+                                <th class="bg-light w-25">Vigencia:</th>
+                                <td>{{ cotizacion.fecha_vigencia | date: "EEE, d 'de' MMMM yyyy" }}</td>
                               </tr>
                               <tr>
-                                <th class="table-primary w-25 px-2">Tipo:</th>
-                                <td class="w-75">{{ cotizacion.evento?.item }}</td>
+                                <th class="bg-light w-25">Tipo:</th>
+                                <td>{{ cotizacion.evento?.item || 'N/A' }}</td>
                               </tr>
                               <tr>
-                                <th class="table-primary w-25 px-2">Duración:</th>
-                                <td class="w-75">{{ cotizacion.duracion_evento }} horas</td>
+                                <th class="bg-light w-25">Duración:</th>
+                                <td>{{ cotizacion.duracion_evento || 0 }} horas</td>
                               </tr>
                               <tr>
-                                <th class="table-primary w-25 px-2">Subtotal:</th>
-                                <td class="w-75">{{ cotizacion.subtotal | currency }}</td>
+                                <th class="bg-light w-25">Subtotal:</th>
+                                <td>{{ cotizacion.subtotal | currency }}</td>
                               </tr>
                               <tr>
-                                <th class="table-primary w-25 px-2">IVA:</th>
-                                <td class="w-75">{{ (cotizacion.iva * cotizacion.subtotal)/100 | currency }}</td>
+                                <th class="bg-light w-25">IVA:</th>
+                                <td>{{ (cotizacion.iva * cotizacion.subtotal) / 100 | currency }}</td>
                               </tr>
                             </tbody>
                           </table>
@@ -123,40 +157,46 @@
                     </div>
                   </div>
                 </div>
-                <!-- Fin detalles del evento -->
               </td>
 
               <td colspan="7">
                 <div *ngIf="cotizacion.detalles && cotizacion.detalles.length > 0">
-                  <table class="table table-sm table-bordered mb-0 shadow mt-1">
-                    <thead>
-                      <tr class="text-center">
-                        <th>Cantidad</th>
-                        <th>Producto</th>
-                        <th>Paquete</th>
-                        <th>Costo</th>
-                        <th>Descuento</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let detalle of cotizacion.detalles; let j = index">
-                        <td class="text-center">{{ detalle.cantidad }}</td>
-                        <td class="text-center">{{ detalle.info_producto?.producto }}</td>
-                        <td class="text-center">{{ detalle.info_paquete?.nombre_paquete }}</td>
-                        <ng-container *ngIf="detalle.info_producto; else paquete">
-                          <td class="text-center">{{ detalle.info_producto?.costo*detalle.cantidad }}</td>
-                        </ng-container>
-                        <ng-template #paquete>
-                          <td class="text-center">{{ detalle.info_paquete?.precio_total * detalle.cantidad}}</td>
-                        </ng-template>
-
-                        <td class="text-center">{{ detalle.descuento }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <h6 class="text-primary mb-2">
+                    <i class="feather icon-package me-1"></i>
+                    Items de la cotización
+                  </h6>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-bordered bg-white">
+                      <thead class="table-light">
+                        <tr class="text-center">
+                          <th>Cantidad</th>
+                          <th>Producto</th>
+                          <th>Paquete</th>
+                          <th>Costo total</th>
+                          <th>Descuento</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let detalle of cotizacion.detalles">
+                          <td class="text-center">{{ detalle.cantidad }}</td>
+                          <td class="text-center">{{ detalle.info_producto?.producto || '-' }}</td>
+                          <td class="text-center">{{ detalle.info_paquete?.nombre_paquete || '-' }}</td>
+                          <td class="text-center fw-bold">
+                            <ng-container *ngIf="detalle.info_producto; else paqueteCosto">
+                              {{ detalle.info_producto?.costo * detalle.cantidad | currency }}
+                            </ng-container>
+                            <ng-template #paqueteCosto>
+                              {{ detalle.info_paquete?.precio_total * detalle.cantidad | currency }}
+                            </ng-template>
+                          </td>
+                          <td class="text-center">{{ detalle.descuento | currency }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-                <div *ngIf="!(cotizacion.detalles && cotizacion.detalles.length > 0)" class="text-center">
-                  <em>Esta cotización no tiene detalles.</em>
+                <div *ngIf="!(cotizacion.detalles && cotizacion.detalles.length > 0)" class="text-center p-3">
+                  <em class="text-muted">Esta cotización no tiene detalles</em>
                 </div>
               </td>
             </tr>
@@ -164,16 +204,29 @@
         </tbody>
       </table>
     </div>
+    <div *ngIf="month" class="small text-muted mb-1">
+      Debug: tiene_mas={{ month.tiene_mas }}, cotizaciones={{ month.cotizaciones.length }}, total={{ month.total_en_mes }}
+    </div>
+    <div *ngIf="month.tiene_mas" class="text-center my-3">
+      <button class="btn btn-outline-primary btn-sm" (click)="cargarMasPorMes(month.month_key)" [disabled]="mesesCargando[month.month_key]">
+        <span *ngIf="mesesCargando[month.month_key]" class="spinner-border spinner-border-sm me-2"></span>
+        {{ mesesCargando[month.month_key] ? 'Cargando...' : 'Cargar más cotizaciones de ' + month.month_name }}
+      </button>
+    </div>
   </ng-container>
 
-  
-  <app-cotizacion-form 
-  *ngIf="mostrarFormulario" 
-  class="modal-overlay"
-  [isEditMode]="true" 
-  [cotizacionExistente]="cotizacionSeleccionada"
-  (cotizacionGuardada)="onCotizacionGuardada()"
-  (modalCerrado)="onModalCerrado()">
-  </app-cotizacion-form>
-  
+  <!-- Botón "Cargar más" global -->
+  <div *ngIf="hasMoreData" class="text-center my-5">
+    <button class="btn btn-primary btn-lg px-5" (click)="cargarMas()" [disabled]="isLoading">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+      {{ isLoading ? 'Cargando...' : 'Cargar más cotizaciones' }}
+    </button>
+  </div>
+
+  <!-- Mensaje cuando no hay datos -->
+  <div *ngIf="!isLoading && groupedByMonth.length === 0" class="text-center my-5 py-5">
+    <i class="feather icon-file-text" style="font-size: 4rem; color: #ccc"></i>
+    <h4 class="mt-3 text-muted">No hay cotizaciones para mostrar</h4>
+    <p class="text-muted">Prueba con otros filtros o crea una nueva cotización</p>
+  </div>
 </app-delay-animations>
