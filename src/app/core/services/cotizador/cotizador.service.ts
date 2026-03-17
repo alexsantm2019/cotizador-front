@@ -47,6 +47,23 @@ export class CotizacionesService {
     });
   }
 
+getCotizacionesPorMes(
+  year: number,
+  month: number,
+  page: number,
+  pageSize: number
+): Observable<any> {
+
+  let url = `${this.apiUrl}/get_cotizaciones_por_mes/${year}/${month}/`;
+
+  return this.http.get<any>(url, {
+    params: {
+      page: page,
+      page_size: pageSize
+    }
+  });
+}
+
   createCotizacion(data: any): Observable<CotizacionInterface> {
     return this.http.post<CotizacionInterface>(`${this.apiUrl}/create_cotizacion`, data);
   }

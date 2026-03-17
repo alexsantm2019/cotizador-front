@@ -30,7 +30,7 @@ import { finalize } from 'rxjs';
   templateUrl: './cotizacion-form.component.html',
   styleUrls: ['./cotizacion-form.component.scss']
 })
-export class CotizadorFormComponent implements OnInit {
+export class CotizadorFormComponent implements OnInit, OnChanges {
 
   @Input() isEditMode: boolean = false;
   @Input() cotizacionExistente: any = null;
@@ -75,15 +75,6 @@ export class CotizadorFormComponent implements OnInit {
     private cdr: ChangeDetectorRef) {
     this.inicializarFormulario();
   }
-
-  // ngOnInit(): void {
-  //   this.getClientes();
-  //   this.getProductos();
-  //   this.getPaquetes();
-  //   this.getEstadosCotizacion();
-  //   this.getTipoEventos();
-  // }
-
   ngOnInit(): void {
   if (this.isEditMode) {
     // Esperamos al ciclo de render
@@ -100,11 +91,28 @@ export class CotizadorFormComponent implements OnInit {
 }
 
 
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if (changes['cotizacionExistente'] && changes['cotizacionExistente'].currentValue) {
+  //     this.cargarCotizacion(this.cotizacionExistente);
+  //   }
+  // }
+
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['cotizacionExistente'] && changes['cotizacionExistente'].currentValue) {
-      this.cargarCotizacion(this.cotizacionExistente);
-    }
+  if (
+    changes['cotizacionExistente'] &&
+    changes['cotizacionExistente'].currentValue
+  ) {
+    console.log('🔥 Nueva cotización recibida');
+
+    this.resetFormulario(); // 🔥 IMPORTANTE
+    this.cargarCotizacion(changes['cotizacionExistente'].currentValue);
   }
+  }
+  
+  resetFormulario() {
+  this.cotizacionForm.reset();
+  this.itemsCotizacion = [];
+}
 
   inicializarFormulario(): void {
     this.cotizacionForm = this.fb.group({
@@ -165,6 +173,45 @@ export class CotizadorFormComponent implements OnInit {
       }
     });
   }
+
+// cargarCotizacion(cotizacion: any): void {
+//   console.log('🔥 Cargando cotización');
+
+//   // 🔥 1. Clonar (IMPORTANTE)
+//   this.itemsCotizacion = [];
+
+//   // 🔥 2. Forzar nuevo array
+//   this.itemsCotizacion = cotizacion.detalles.map((detalle: any) => ({
+//     id: detalle.id,
+//     tipo_item: detalle.tipo_item,
+//     cantidad: Number(detalle.cantidad),
+//     descuento: Number(detalle.descuento),
+
+//     producto: detalle.info_producto?.id || null,
+//     paquete: detalle.info_paquete?.id || null,
+
+//     nombre:
+//       detalle.info_producto?.producto ||
+//       detalle.info_paquete?.paquete,
+
+//     costo:
+//       detalle.info_producto?.costo ||
+//       detalle.info_paquete?.costo
+//   }));
+
+//   // 🔥 3. Patch del form
+//   this.cotizacionForm.patchValue({
+//     cliente: cotizacion.cliente?.id,
+//     nombre_evento: cotizacion.nombre_evento,
+//     fecha_evento: cotizacion.fecha_evento,
+//     fecha_vigencia: cotizacion.fecha_vigencia,
+//     duracion_evento: cotizacion.duracion_evento,
+//   });
+
+//   console.log('🧪 itemsCotizacion:', this.itemsCotizacion);
+// }
+  
+
   cargarCotizacion(cotizacion: any): void {
     if (cotizacion) {
       // Limpia itemsCotizacion para evitar datos duplicados
@@ -174,15 +221,20 @@ export class CotizadorFormComponent implements OnInit {
       this.poblarItemsCotizacion(cotizacion);
 
       // Actualizar el formulario con los datos existentes usando los nombres correctos de la BD
+      console.log("Cotizacion: ", cotizacion)
       this.cotizacionForm.patchValue({
-        cliente: cotizacion.cliente,
+        // cliente: cotizacion.cliente,
+        cliente: cotizacion.cliente?.id,
         iva: parseFloat(cotizacion.iva),
-        estado: parseFloat(cotizacion.estado),
+        // estado: parseFloat(cotizacion.estado),
+        estado: parseFloat(cotizacion.estado_info?.id,),
         // Mapeo correcto de los campos de la base de datos
         fechaValidez: this.parsearFecha(cotizacion.fecha_vigencia),
         fechaEvento: this.parsearFecha(cotizacion.fecha_evento),
         nombreCotizacion: cotizacion.nombre_evento || '',
-        tipoEvento: cotizacion.tipo_evento || '',
+        // tipoEvento: cotizacion.tipo_evento || '',
+        tipoEvento: cotizacion.tipo_evento_info?.id || '',
+        //tipoEvento: cotizacion.evento || '',
         duracionEvento: cotizacion.duracion_evento || ''
       });
     }

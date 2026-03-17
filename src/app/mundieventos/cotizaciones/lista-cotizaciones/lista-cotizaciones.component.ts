@@ -67,7 +67,6 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
   filtroCliente: number | null = null;
 
   ngOnInit(): void {
-    // this.getCotizaciones();
     this.getClientes();
   }
 
@@ -81,10 +80,14 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
   }
 
   // INstancia de formulario de cotizacion para solo ejecutar 1 vez:
-  editarCotizacion(cotizacion: any) {
-    this.cotizacionSeleccionada = cotizacion;
-    this.mostrarFormulario = true;
+ editarCotizacion(cotizacion: any) {
+  console.log('🧪 cotizacion:', cotizacion);
+  console.log('🧪 detalles:', cotizacion.detalles);
+  this.cotizacionSeleccionada = cotizacion;
+  this.mostrarFormulario = true;
   }
+  
+
 
   cerrarFormulario() {
     this.mostrarFormulario = false;
@@ -119,61 +122,6 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
     this.visibleDetallesId = this.visibleDetallesId === id ? null : id;
   }
 
-  // Obtiene los paquetes desde el servicio
-  // getCotizaciones(): void {
-  //   this.cotizacionService.getCotizaciones().subscribe({
-  //     next: (data) => {
-  //       this.cotizaciones = data;
-  //       this.groupCotizacionesByFecha();
-  //     },
-  //     error: (error) => {
-  //       console.error('Error en la búsqueda de paquetes:', error);
-  //     },
-  //   });
-  // }
-
-  // getCotizaciones(): void {
-  //   if (this.year) {
-  //     this.cotizacionService.getCotizacionesPorFecha(this.year).subscribe({
-  //       next: (data) => {
-  //         this.cotizaciones = data;
-  //         this.groupCotizacionesByFecha();
-  //       },
-  //       error: (error) => {
-  //         console.error('Error al obtener cotizaciones por año:', error);
-  //       }
-  //     });
-  //   }
-  // }
-
-  // cargarMasPorMes(monthKey: string): void {
-  //   if (this.mesesCargando[monthKey]) return;
-
-  //   this.mesesCargando[monthKey] = true;
-
-  //   const [year, month] = monthKey.split('-').map(Number);
-  //   const paginaActual = this.paginasPorMes[monthKey] || 1;
-  //   const siguientePagina = paginaActual + 1;
-
-  //   this.cotizacionService.getCotizacionesAgrupadas(year, month, siguientePagina, this.pageSize).subscribe({
-  //     next: (response: any) => {
-  //       const mesExistente = this.groupedByMonth.find((m) => m.month_key === monthKey);
-
-  //       if (mesExistente) {
-  //         // Agregar nuevas cotizaciones
-  //         mesExistente.cotizaciones = [...mesExistente.cotizaciones, ...response.data];
-  //         mesExistente.tiene_mas = response.data.length >= this.pageSize;
-  //       }
-
-  //       this.paginasPorMes[monthKey] = siguientePagina;
-  //       this.mesesCargando[monthKey] = false;
-  //     },
-  //     error: (error) => {
-  //       console.error('Error:', error);
-  //       this.mesesCargando[monthKey] = false;
-  //     }
-  //   });
-  // }
   cargarMasPorMes(monthKey: string): void {
     if (this.mesesCargando[monthKey]) return;
 
@@ -183,33 +131,28 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
     const paginaActual = this.paginasPorMes[monthKey] || 1;
     const siguientePagina = paginaActual + 1;
 
-    console.log(`🔄 Cargando página ${siguientePagina} para ${monthKey}`);
+    // console.log(`🔄 Cargando página ${siguientePagina} para ${monthKey}`);
 
-    this.cotizacionService.getCotizacionesAgrupadas(year, month, siguientePagina, this.pageSize).subscribe({
+    this.cotizacionService.getCotizacionesPorMes(year, month, siguientePagina, this.pageSize).subscribe({
       next: (response: any) => {
-        console.log(`📦 Respuesta para ${monthKey}:`, response);
+        // console.log(`📦 Respuesta para ${monthKey}:`, response);
 
         const mesExistente = this.groupedByMonth.find((m) => m.month_key === monthKey);
 
         if (mesExistente && response.data && response.data.length > 0) {
-          const mesData = response.data[0];
+          const nuevasCotizaciones = (response.data || []).filter(
+          (cot: any) => cot.nombre_evento && cot.nombre_evento.trim() !== ''
+        );
 
-          if (mesData && mesData.cotizaciones) {
-            // Filtrar registros vacíos
-            const nuevasCotizaciones = mesData.cotizaciones.filter((cot: any) => cot.nombre_evento && cot.nombre_evento.trim() !== '');
+        // console.log(`✅ Recibidas ${nuevasCotizaciones.length} cotizaciones nuevas`);
 
-            console.log(`✅ Recibidas ${nuevasCotizaciones.length} cotizaciones nuevas`);
+        mesExistente.cotizaciones = [
+          ...mesExistente.cotizaciones,
+          ...nuevasCotizaciones
+        ];
 
-            // Agregar nuevas cotizaciones
-            mesExistente.cotizaciones = [...mesExistente.cotizaciones, ...nuevasCotizaciones];
+        mesExistente.tiene_mas = response.pagination?.tiene_mas;
 
-            // ✅ ACTUALIZAR tiene_mas: si recibimos menos del pageSize, es la última página
-            mesExistente.tiene_mas = nuevasCotizaciones.length >= this.pageSize;
-
-            console.log(
-              `📊 Mes ${monthKey}: ahora tiene ${mesExistente.cotizaciones.length} cotizaciones, tiene_mas=${mesExistente.tiene_mas}`
-            );
-          }
         }
 
         this.paginasPorMes[monthKey] = siguientePagina;
@@ -253,16 +196,6 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
           })
           .filter((mes: any) => mes.cotizaciones.length > 0); // Solo meses con cotizaciones
 
-        console.log(
-          '📊 Meses filtrados:',
-          mesesFiltrados.map((m: any) => ({
-            mes: m.month_name,
-            mostradas: m.cotizaciones.length,
-            total: m.total_en_mes,
-            tiene_mas: m.tiene_mas
-          }))
-        );
-
         if (this.currentPage === 1) {
           this.groupedByMonth = mesesFiltrados;
 
@@ -300,31 +233,6 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
     });
   }
 
-  private mergeGroupedData(existing: any[], newData: any[]): any[] {
-    const merged = [...existing];
-
-    for (const newGroup of newData) {
-      const existingGroup = merged.find((g) => g.fecha === newGroup.fecha);
-      if (existingGroup) {
-        existingGroup.cotizaciones = [...existingGroup.cotizaciones, ...newGroup.cotizaciones];
-      } else {
-        merged.push(newGroup);
-      }
-    }
-
-    // Ordenar por fecha descendente
-    return merged.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
-  }
-
-  // limpiarFiltros(): void {
-  //   // Poner ambos filtros en null
-  //   this.filtroFecha = null;
-  //   this.filtroCliente = null;
-
-  //   // Llamar a aplicarFiltros() para actualizar la lista sin filtros
-  //   this.aplicarFiltros();
-  // }
-
   limpiarFiltros(): void {
     this.filtroFecha = null;
     this.filtroCliente = null;
@@ -344,10 +252,6 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
   trackByCotizacionId(index: number, cotizacion: any): number {
     return cotizacion.id;
   }
-
-  // aplicarFiltros(): void {
-  //   this.groupedCotizaciones = this.filtrarCotizaciones();
-  // }
 
   aplicarFiltros(): void {
     this.currentPage = 1;
@@ -453,14 +357,6 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
     );
   }
 
-  // editarCotizacion(cotizacion: any): void {
-  //   this.editarCotizacionEvent.emit(cotizacion);
-  // }
-
-  // actualizarListaCotizaciones(): void {
-  //   this.getCotizaciones();
-  // }
-
   getClientes(): void {
     this.clientesService.getClientes().subscribe({
       next: (data) => {
@@ -508,35 +404,6 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
     });
   }
 
-  // downloadPDF(id: number): void {
-  //   this.cotizacionService.downloadPDF(id).subscribe({
-  //     next: (data: Blob) => {
-  //       const fileURL = URL.createObjectURL(data);
-  //       const a = document.createElement('a');
-  //       const now = new Date();
-
-  //       const year = now.getFullYear();
-  //       const month = String(now.getMonth() + 1).padStart(2, '0'); // Mes empieza en 0
-  //       const day = String(now.getDate()).padStart(2, '0');
-  //       const hours = String(now.getHours()).padStart(2, '0');
-  //       const minutes = String(now.getMinutes()).padStart(2, '0');
-  //       const seconds = String(now.getSeconds()).padStart(2, '0');
-  //       const fecha = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-
-  //       a.href = fileURL;
-  //       a.download = `cotizacion_${fecha}.pdf`;
-  //       a.target = '_blank';
-  //       document.body.appendChild(a);
-  //       a.click();
-  //       document.body.removeChild(a);
-
-  //       this.showSuccess('Cotización abierta y descargada exitosamente');
-  //     },
-  //     error: (error) => {
-  //       console.error('Error en la descarga del PDF:', error);
-  //     },
-  //   });
-  // }
 
   showSuccess(msg: any) {
     this.notyf.success(msg);

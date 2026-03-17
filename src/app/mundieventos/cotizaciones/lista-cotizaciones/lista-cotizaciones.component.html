@@ -62,7 +62,7 @@
             <!-- Fila principal de la cotización -->
             <tr class="align-middle">
               <td class="text-left">{{ cotizacion.nombre_evento || 'Sin nombre' }}</td>
-              <td class="text-center">{{ cotizacion.info_cliente?.nombre || 'N/A' }}</td>
+              <td class="text-center">{{ cotizacion.cliente?.nombre || 'N/A' }}</td>
               <td class="text-center">{{ cotizacion.fecha_evento | date: "EEE, d 'de' MMMM yyyy" }}</td>
               <td class="text-center fw-bold">{{ cotizacion.total | currency: 'USD' : 'symbol' : '1.2-2' }}</td>
               <td class="text-center">
@@ -99,7 +99,6 @@
                   >
                     <i class="feather icon-trash"></i>
                   </button>
-
                   <button
                     type="button"
                     class="btn btn-sm btn-outline-primary"
@@ -204,9 +203,9 @@
         </tbody>
       </table>
     </div>
-    <div *ngIf="month" class="small text-muted mb-1">
+    <!-- <div *ngIf="month" class="small text-muted mb-1">
       Debug: tiene_mas={{ month.tiene_mas }}, cotizaciones={{ month.cotizaciones.length }}, total={{ month.total_en_mes }}
-    </div>
+    </div> -->
     <div *ngIf="month.tiene_mas" class="text-center my-3">
       <button class="btn btn-outline-primary btn-sm" (click)="cargarMasPorMes(month.month_key)" [disabled]="mesesCargando[month.month_key]">
         <span *ngIf="mesesCargando[month.month_key]" class="spinner-border spinner-border-sm me-2"></span>
@@ -229,4 +228,11 @@
     <h4 class="mt-3 text-muted">No hay cotizaciones para mostrar</h4>
     <p class="text-muted">Prueba con otros filtros o crea una nueva cotización</p>
   </div>
+
+    <app-cotizacion-form *ngIf="mostrarFormulario" class="modal-overlay" [isEditMode]="true"
+      [cotizacionExistente]="cotizacionSeleccionada" (cotizacionGuardada)="onCotizacionGuardada()"
+      (modalCerrado)="onModalCerrado()">
+    </app-cotizacion-form>
+
 </app-delay-animations>
+
