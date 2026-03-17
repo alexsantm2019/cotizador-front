@@ -29,7 +29,7 @@ export class ProductosService {
       params.search = search;
     }
 
-    const url = `${this.apiUrl}/get_productos`;
+    const url = `${this.apiUrl}/get_productos_optimizado`;
     return this.http.get(url, { params });
   }
 
