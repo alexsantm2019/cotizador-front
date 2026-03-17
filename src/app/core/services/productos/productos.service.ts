@@ -9,15 +9,28 @@ import { ProductosInterface } from '../../models/productos.model';
   providedIn: 'root'
 })
 export class ProductosService {
-
   private server = environment.apiUrl;
   private apiUrl = `${this.server}/api/productos`;
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   getProductos(): Observable<ProductosInterface[]> {
     return this.http.get<ProductosInterface[]>(`${this.apiUrl}/get_productos`);
+  }
+
+  getProductosOptimizados(page: number = 1, pageSize: number = 20, search: string = '') {
+    const params: any = {
+      page: page.toString(),
+      page_size: pageSize.toString()
+    };
+
+    // 👇 Agregar search a los parámetros si existe
+    if (search) {
+      params.search = search;
+    }
+
+    const url = `${this.apiUrl}/get_productos`;
+    return this.http.get(url, { params });
   }
 
   getProductosInventario(): Observable<ProductosInterface[]> {
@@ -42,5 +55,4 @@ export class ProductosService {
     const url = `${this.apiUrl}/delete_producto/${id}`;
     return this.http.delete<ProductosInterface>(url);
   }
-
 }

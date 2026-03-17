@@ -1,29 +1,48 @@
 <div class="row">
-  <app-card cardTitle=""  headerClass="d-none" [options]="false" blockClass="table-border-style">
-    <div class="d-flex justify-content-between">
+  <app-card cardTitle="" headerClass="d-none" [options]="false" blockClass="table-border-style">
+    <div class="d-flex justify-content-between align-items-center mb-3">
       <!-- Buscador -->
       <app-producto-search (searchChange)="onSearch($event)"></app-producto-search>
-      <!-- SWITCH PARA MOSTRAR/OCULTAR DESCRIPCIÓN -->
-      <div class="form-check form-switch me-3">
-        <input class="form-check-input" type="checkbox" id="switchDescripcion" [(ngModel)]="mostrarDescripcion">
-        <label class="form-check-label" for="switchDescripcion">
-          Mostrar descripción
-        </label>
-        <button type="button" class="btn btn-sm btn-light-primary mx-3" (click)="getProductos()">
-          Refresh
+      <small *ngIf="isLoading" class="position-absolute text-muted" style="right: 10px; top: 8px">Buscando...</small>
+
+      <div class="d-flex align-items-center">
+        <!-- SWITCH PARA MOSTRAR/OCULTAR DESCRIPCIÓN -->
+        <div class="form-check form-switch me-3">
+          <input class="form-check-input" type="checkbox" id="switchDescripcion" [(ngModel)]="mostrarDescripcion" />
+          <label class="form-check-label" for="switchDescripcion">Mostrar descripción</label>
+        </div>
+
+        <!-- Botón Refresh -->
+        <button type="button" class="btn btn-sm btn-outline-secondary me-3" (click)="refresh()" [disabled]="isLoading">
+          <i class="feather icon-refresh-cw" [class.spin]="isLoading"></i>
+          {{ isLoading ? 'Cargando...' : 'Actualizar' }}
         </button>
+
+        <!-- Nuevo producto -->
+        <app-nuevo-producto
+          [producto]="productoSeleccionado"
+          [isEditMode]="isEditMode"
+          (productoGuardado)="onProductoGuardado($event)"
+        ></app-nuevo-producto>
       </div>
-      
-      <!-- Nuevo producto -->
-      <app-nuevo-producto [producto]="productoSeleccionado" [isEditMode]="isEditMode"
-        (productoGuardado)="onProductoGuardado($event)">
-      </app-nuevo-producto>
     </div>
-    <div class="table-responsive">
+
+    <span *ngIf="searchTermBackend() && !isLoading" class="text-muted">
+      {{ totalResultados }} resultado(s) para "{{ searchTermBackend() }}"
+    </span>
+
+    <!-- Indicador de carga -->
+    <div *ngIf="isLoading && productos().length === 0" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Tabla de productos -->
+    <div class="table-responsive" *ngIf="!isLoading || productos().length > 0">
       <table class="table table-sm table-hover">
         <thead>
           <tr class="text-center">
-            <!-- <th>#</th> -->
             <th>Producto</th>
             <th *ngIf="mostrarDescripcion">Descripción</th>
             <th>Cantidad</th>
@@ -38,64 +57,81 @@
         </thead>
         <tbody>
           <tr *ngFor="let producto of getPagedProducts(); let i = index">
-            <!-- <th scope="row">{{ i + 1 }}</th> -->
             <td>{{ producto.producto }}</td>
-            <td *ngIf="mostrarDescripcion" style="width: 150px;">{{ producto.descripcion }}</td>
-            <td class="text-center">{{ producto.cantidad }}</td>
+            <td *ngIf="mostrarDescripcion" style="width: 150px">{{ producto.descripcion || '-' }}</td>
+            <td class="text-center">{{ producto.cantidad || 0 }}</td>
             <td class="text-center">
-              <span class="text-center">
-                {{ producto.tipo_costo_info?.item }}
+              <span class="badge" [style.background]="producto.tipo_costo_info?.color + '20'">
+                {{ producto.tipo_costo_info?.item || 'N/A' }}
               </span>
             </td>
-
             <td class="text-center">{{ producto.costo | currency }}</td>
-            <td>{{ producto.ubicacion }}</td>
+            <td>{{ producto.ubicacion || '-' }}</td>
             <td class="text-center">
-              <span [ngStyle]="{ 'color': producto.categoria_info?.color }" class="text-center">
-                {{ producto.categoria_info?.categoria }}
+              <span [ngStyle]="{ color: producto.categoria_info?.color }">
+                {{ producto.categoria_info?.categoria || 'N/A' }}
               </span>
             </td>
             <td class="text-center">
-              <span [ngStyle]="{ 'color': producto.estado_info?.color }" class="text-center">
-                {{ producto.estado_info?.item }}
+              <span [ngStyle]="{ color: producto.estado_info?.color }">
+                {{ producto.estado_info?.item || 'N/A' }}
               </span>
             </td>
-            <td class="text-center text-muted">{{ producto.user }}</td>
+            <td class="text-center text-muted">{{ producto.user || 'Sistema' }}</td>
             <td class="text-center">
-              <!-- Edicion de producto -->
-              <app-nuevo-producto [producto]="producto" [isEditMode]="true"
-                (productoGuardado)="onProductoGuardado($event)">
-              </app-nuevo-producto>
-              <!-- Eliminar producto -->
-              <button type="button" class="btn btn-sm btn-light-danger" aria-label="Close"
-                (click)="deleteProducto(producto.id)">
-                <i class="feather icon-trash"></i>
-              </button>
+              <div class="btn-group" role="group">
+                <!-- Edicion de producto -->
+                <app-nuevo-producto
+                  [producto]="producto"
+                  [isEditMode]="true"
+                  (productoGuardado)="onProductoGuardado($event)"
+                ></app-nuevo-producto>
+                <!-- Eliminar producto -->
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteProducto(producto.id)" title="Eliminar">
+                  <i class="feather icon-trash"></i>
+                </button>
+              </div>
             </td>
           </tr>
-          <tr *ngIf="getPagedProducts().length === 0">
-            <td colspan="8" class="text-center">No hay productos disponibles</td>
+          <tr *ngIf="getPagedProducts().length === 0 && !isLoading">
+            <td [colSpan]="mostrarDescripcion ? 10 : 9" class="text-center py-4">
+              <i class="feather icon-box" style="font-size: 3rem; color: #ccc"></i>
+              <p class="mt-2 text-muted">No hay productos disponibles</p>
+            </td>
           </tr>
         </tbody>
       </table>
 
-      <nav aria-label="Paginación">
+      <!-- Paginación mejorada -->
+      <!-- <div class="text-center text-muted small mt-2" *ngIf="productos().length > 0">
+        Mostrando {{ productos().length }} de {{ totalResultados }} productos • Página {{ currentPage }} de {{ totalPages }}
+      </div> -->
+      <nav aria-label="Paginación" class="mt-3" *ngIf="totalPages > 1">
         <ul class="pagination justify-content-center">
           <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link" (click)="currentPage = currentPage - 1">Anterior</a>
+            <a class="page-link" (click)="changePage(currentPage - 1)">
+              <i class="feather icon-chevron-left"></i>
+              Anterior
+            </a>
           </li>
-          <li class="page-item" *ngFor="let page of getPageArray(productos.length)"
-            [class.active]="page === currentPage">
-            <a class="page-link" (click)="currentPage = page">{{ page }}</a>
+
+          <li class="page-item" *ngFor="let page of getPageArray()" [class.active]="page === currentPage">
+            <a class="page-link" (click)="changePage(page)">{{ page }}</a>
           </li>
-          <li class="page-item" [class.disabled]="currentPage === getPageArray(productos.length).length">
-            <a class="page-link" (click)="currentPage = currentPage + 1">Siguiente</a>
+
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)">
+              Siguiente
+              <i class="feather icon-chevron-right"></i>
+            </a>
           </li>
         </ul>
       </nav>
 
+      <!-- Info de paginación -->
+      <div class="text-center text-muted small mt-2" *ngIf="productos().length > 0">
+        Mostrando {{ productos().length }} productos • Página {{ currentPage }} de {{ totalPages }}
+      </div>
     </div>
   </app-card>
-
-
 </div>
