@@ -193,22 +193,43 @@ export class EstadisticasCotizacionesComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCotizaciones(): void {
-    const year = this.filterForm.get('year')?.value;
-    const month = this.filterForm.get('month')?.value;
-    this.cotizacionesService.getCotizacionesPorFecha(year, month).subscribe({
-      next: (data) => {
-        this.cotizaciones = data;
-        this.procesarDatosParaGrafico(); // Procesar los datos para los gráficos
+  // getCotizaciones(): void {
+  //   const year = this.filterForm.get('year')?.value;
+  //   const month = this.filterForm.get('month')?.value;
+  //   this.cotizacionesService.getCotizacionesPorFecha(year, month).subscribe({
+  //     next: (data) => {
+  //       this.cotizaciones = data;
+  //       this.procesarDatosParaGrafico(); // Procesar los datos para los gráficos
 
-        // Forzar la detección de cambios para actualizar la vista
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error en la búsqueda de cotizaciones:', error);
-      },
-    });
-  }
+  //       // Forzar la detección de cambios para actualizar la vista
+  //       this.cdr.detectChanges();
+  //     },
+  //     error: (error) => {
+  //       console.error('Error en la búsqueda de cotizaciones:', error);
+  //     },
+  //   });
+  // }
+
+  getCotizaciones(): void {
+  const year = this.filterForm.get('year')?.value;
+    const month = this.filterForm.get('month')?.value;
+    const page = 1;
+    const size = 100;
+
+  this.cotizacionesService.getCotizacionesPorMes(year, month, page, size).subscribe({
+    next: (data) => {
+      // this.cotizaciones = data || [];
+      this.cotizaciones = data?.data || [];
+
+      this.procesarDatosParaGrafico();
+
+      this.cdr.detectChanges();
+    },
+    error: (error) => {
+      console.error(error);
+    }
+  });
+}
 
   getClientes(): void {
     this.clientesService.getClientes().subscribe({

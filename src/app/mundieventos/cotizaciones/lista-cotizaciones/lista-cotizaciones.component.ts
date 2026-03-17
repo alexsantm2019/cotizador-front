@@ -49,6 +49,8 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
   groupedByMonth: any[] = [];
   mesesCargando: { [monthKey: string]: boolean } = {};
   paginasPorMes: { [monthKey: string]: number } = {};
+  groupedByMonthFiltrado: any[] = [];
+  filtrosActivos: boolean = false;
 
   pageSize = 20;
   itemsPerPage: number = 15;
@@ -231,6 +233,7 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
         this.isLoading = false;
       }
     });
+    this.groupedByMonthFiltrado = [...this.groupedByMonth];
   }
 
   limpiarFiltros(): void {
@@ -253,11 +256,59 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
     return cotizacion.id;
   }
 
+  // aplicarFiltros(): void {
+  //   this.currentPage = 1;
+  //   this.groupedByMonth = []; // ✅ Cambiar a groupedByMonth
+  //   this.getCotizaciones();
+  // }
+
+  
   aplicarFiltros(): void {
-    this.currentPage = 1;
-    this.groupedByMonth = []; // ✅ Cambiar a groupedByMonth
-    this.getCotizaciones();
+   this.filtrosActivos = !!this.filtroCliente || !!this.filtroFecha;
+  this.currentPage = 1;
+  
+
+  // Si no hay filtros, mostrar todo
+  if (!this.filtroCliente && !this.filtroFecha) {
+    this.groupedByMonthFiltrado = [...this.groupedByMonth];
+    return;
   }
+
+  this.groupedByMonthFiltrado = this.filtrarCotizaciones();
+}
+  
+filtrarCotizaciones() {
+  return this.groupedByMonth
+    .map((grupo: any) => {
+
+      const cotizacionesFiltradas = grupo.cotizaciones.filter((cot: any) => {
+
+        // ✅ FILTRO POR CLIENTE
+        if (this.filtroCliente && cot.cliente?.id !== this.filtroCliente) {
+          return false;
+        }
+
+        // ✅ FILTRO POR FECHA
+        if (this.filtroFecha) {
+          const fecha = new Date(cot.fecha_creacion);
+          const fechaUTC = fecha.toISOString().split('T')[0];
+
+          if (fechaUTC !== this.filtroFecha) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      return {
+        ...grupo,
+        cotizaciones: cotizacionesFiltradas
+      };
+    })
+    // ✅ eliminar meses vacíos
+    .filter((grupo: any) => grupo.cotizaciones.length > 0);
+}
 
   cargarMas(): void {
     if (this.hasMoreData && !this.isLoading) {
@@ -266,42 +317,42 @@ export class ListaCotizacionesComponent implements OnInit, OnChanges {
     }
   }
 
-  filtrarCotizaciones() {
-    const groupedMap = new Map<string, any[]>();
+  // filtrarCotizaciones() {
+  //   const groupedMap = new Map<string, any[]>();
 
-    if (this.filtroFecha === '') {
-      this.filtroFecha = null;
-    }
+  //   if (this.filtroFecha === '') {
+  //     this.filtroFecha = null;
+  //   }
 
-    this.cotizaciones.forEach((cotizacion) => {
-      const fecha = new Date(cotizacion.fecha_creacion);
-      const fechaUTC = fecha.toISOString().split('T')[0];
+  //   this.cotizaciones.forEach((cotizacion) => {
+  //     const fecha = new Date(cotizacion.fecha_creacion);
+  //     const fechaUTC = fecha.toISOString().split('T')[0];
 
-      // Si filtroFecha está vacío o nulo, ignorar el filtro
-      const aplicarFiltroFecha = this.filtroFecha && this.filtroFecha.trim() !== '';
-      if (aplicarFiltroFecha && fechaUTC !== this.filtroFecha) {
-        return;
-      }
+  //     // Si filtroFecha está vacío o nulo, ignorar el filtro
+  //     const aplicarFiltroFecha = this.filtroFecha && this.filtroFecha.trim() !== '';
+  //     if (aplicarFiltroFecha && fechaUTC !== this.filtroFecha) {
+  //       return;
+  //     }
 
-      // Aplicar filtro por cliente solo si tiene un valor válido
-      const clienteId =
-        this.filtroCliente && Boolean(this.filtroCliente) && this.filtroCliente !== 0 ? parseInt(String(this.filtroCliente), 10) : null;
+  //     // Aplicar filtro por cliente solo si tiene un valor válido
+  //     const clienteId =
+  //       this.filtroCliente && Boolean(this.filtroCliente) && this.filtroCliente !== 0 ? parseInt(String(this.filtroCliente), 10) : null;
 
-      if (clienteId !== null && cotizacion.cliente !== clienteId) {
-        return;
-      }
+  //     if (clienteId !== null && cotizacion.cliente !== clienteId) {
+  //       return;
+  //     }
 
-      if (!groupedMap.has(fechaUTC)) {
-        groupedMap.set(fechaUTC, []);
-      }
-      groupedMap.get(fechaUTC)?.push(cotizacion);
-    });
+  //     if (!groupedMap.has(fechaUTC)) {
+  //       groupedMap.set(fechaUTC, []);
+  //     }
+  //     groupedMap.get(fechaUTC)?.push(cotizacion);
+  //   });
 
-    return Array.from(groupedMap.entries()).map(([fecha, cotizaciones]) => ({
-      fecha,
-      cotizaciones
-    }));
-  }
+  //   return Array.from(groupedMap.entries()).map(([fecha, cotizaciones]) => ({
+  //     fecha,
+  //     cotizaciones
+  //   }));
+  // }
 
   groupCotizacionesByFecha() {
     const groupedMap = new Map<string, any[]>();
